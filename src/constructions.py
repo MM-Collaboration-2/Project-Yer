@@ -3,50 +3,6 @@ from utils import infix_to_postfix, token_type
 from basic import *
 
 
-class Operation():                                                  # Класс для осуществления и менеджмента
-    def equate(lop: Object, rop: Object) -> Int: #!!!!!!!!!!!!!
-        lop.data = rop.data
-        return lop
-
-    def addeq(lop: Object, rop: Object) -> Int: #!!!!!!!!!!!!!
-        lop.data += rop.data
-        return lop
-
-    def subeq(lop: Object, rop: Object) -> Int: #!!!!!!!!!!!!!
-        lop.data -= rop.data
-        return lop
-
-    def muleq(lop: Object, rop: Object) -> Int: #!!!!!!!!!!!!!
-        lop.data *= rop.data
-        return lop
-
-    def diveq(lop: Object, rop: Object) -> Int: #!!!!!!!!!!!!!
-        lop.data /= rop.data
-        return lop
-
-
-    operations: dict[str, ()] = {
-            '=': equate, 
-            '+=': addeq,
-            '-=': subeq,
-            '*=': muleq,
-            '/=': diveq,
-
-            '+': lambda lop, rop: Int(lop.data + rop.data),
-            '-': lambda lop, rop: Int(lop.data - rop.data),
-            '*': lambda lop, rop: Int(lop.data * rop.data),
-            '/': lambda lop, rop: Int(lop.data / rop.data),
-
-            '<': lambda lop, rop: Int(lop.data < rop.data),
-            '>': lambda lop, rop: Int(lop.data > rop.data),
-            '<=': lambda lop, rop: Int(lop.data <= rop.data),
-            '>=': lambda lop, rop: Int(lop.data >= rop.data),
-            '==': lambda lop, rop: Int(lop.data == rop.data),
-            }
-    
-    @classmethod
-    def get(cls, operation: str):
-        return cls.operations[operation]
 
 
 class Construction():
@@ -56,8 +12,8 @@ class Construction():
 
 class BasicExpression(Construction):                                # Базооваое выражение. Все выражения сводятся к ним.
     def __init__(self, lop, rop, op):
-        self.lop: Int = lop
-        self.rop: Int = rop
+        self.lop: Integer = lop
+        self.rop: Integer = rop
         self.op: str = op
 
     def run(self):
@@ -83,13 +39,13 @@ class Expression(Construction):                                     # Выраж
         return self.string
         
     def run(self):                                                  # создаем конвейер из элементарных выражений
-        result: Int
+        result: Integer
         object_stack: Stack = Stack()
         for token in self.postfix:
             tok_type = token_type(token)
 
             if tok_type == 'number':                              # если число -- добавляем число
-                object_stack.push(Int.from_string(token))           # помещаем в стек
+                object_stack.push(Integer(token))           # помещаем в стек
 
             elif tok_type == 'variable':                          # если переменная
 
@@ -131,7 +87,7 @@ class ExpressionBlock(Construction):
         return self.string
 
     def run(self):
-        result: Int
+        result: Integer
         for expression in self.expressions:
             result = expression.run()
         return result
@@ -149,7 +105,7 @@ class Block(Construction):
         self.name: str = 'block'
 
     def run(self):
-        result: Int
+        result: Integer
         for construction in self.constructions:
             result = construction.run()
         return result
