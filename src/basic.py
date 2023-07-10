@@ -45,5 +45,7 @@ class Stack():                          # Стек для дерева выра�
         self.list.append(data)
 
     def __str__(self):
-        str(self.list)
+        return str(self.list)
+
+
 

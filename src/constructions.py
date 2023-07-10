@@ -1,4 +1,4 @@
-from re import fullmatch
+from re import fullmatch, compile, match
 from utils import infix_to_postfix, token_type
 from basic import *
 
@@ -54,18 +54,6 @@ class Construction():
         return 'construction'
 
 
-class Pipeline():
-    def __init__(self):
-        self.pipeline = []
-
-    def add(self, construction: Construction):
-        self.pipeline.append(construction)
-
-    def run(self):
-        while self.pipeline:
-            self.pipeline.pop(0).run()
-
-
 class BasicExpression(Construction):                                # Базооваое выражение. Все выражения сводятся к ним.
     def __init__(self, lop, rop, op):
         self.lop: Int = lop
@@ -84,14 +72,15 @@ class BasicExpression(Construction):                                # Базоо
 
 class Expression(Construction):                                     # Выражение состоит из одного или нескольких базовых выражений
     def __init__(self, string: str, variables: dict):
-        self.string: str = string
-        self.postfix: list[str] = infix_to_postfix(string)
         self.variables: dict = variables
+        self.string: str = string
+        self.postfix: list[str] = infix_to_postfix(self.clear())
         self.name: str = 'expression'
 
-    def __repr__(self):
-        return f'{self.name} {self.string};'
-
+    def clear(self):
+        if self.string.startswith('Expr{'):
+            return self.string[:-1].replace('Expr{', '')
+        return self.string
         
     def run(self):                                                  # создаем конвейер из элементарных выражений
         result: Int
@@ -119,41 +108,27 @@ class Expression(Construction):                                     # Выраж
 
         return result
 
+    def __repr__(self):
+        return f'{self.name} {self.string};'
+
 
 class ExpressionBlock(Construction):
     def __init__(self, string: str, variables: dict):
-        self.string: str = string
         self.variables: dict = variables
-        self.expressions: list[Expression] = self.from_string()
+        self.string: str = string
+        self.expressions: list[Expression] = self.string_to_expressions()
         self.name: str = 'expression block'
 
-    def from_string(self):
-        string = self.string[:-1].replace('Expr{', '')                  # deleting 'Expr{}'
+    def string_to_expressions(self):
+        string = self.clear()
         expressions: list[str] = [s for s in string.split(';') if s]
         expressions = [Expression(e, self.variables) for e in expressions] 
         return expressions
 
-    def run(self):
-        for expression in self.expressions:
-            expression.run()
-
-    def __repr__(self):
-        block = '\n'.join(str(c) for c in self.expressions)
-        block =  f'{self.name}' +'{' + f'\n{block}\n' + '}'
-        return block
-
-class Block(Construction):
-    def __init__(self, string: str, variables: dict):
-        self.string: str = string
-        self.variables: dict = variables
-        self.expressions: list[Expression] = self.from_string()
-        self.name: str = 'block'
-
-    def from_string(self):
-        string = self.string[:-1].replace('Block{', '')                  # deleting 'Block{}'
-        expressions: list[str] = [s for s in string.split(';') if s]
-        expressions = [Expression(e, self.variables) for e in expressions] 
-        return expressions
+    def clear(self):
+        if self.string.startswith('Expr{'):
+            return self.string[:-1].replace('Expr{', '')
+        return self.string
 
     def run(self):
         result: Int
@@ -167,15 +142,43 @@ class Block(Construction):
         return block
 
 
+class Block(Construction):
+    def __init__(self, constructions: list[Construction], variables: dict):
+        self.variables: dict = variables
+        self.constructions: list[Constructio] = constructions
+        self.name: str = 'block'
+
+    def run(self):
+        result: Int
+        for construction in self.constructions:
+            result = construction.run()
+        return result
+
+    def __repr__(self):
+        block = '\n'.join(str(c) for c in self.constructions)
+        block =  f'{self.name}' +'{' + f'\n{block}\n' + '}'
+        return block
+
+
 class If(Construction):
-    def __init__(self, check_expression: Expression, block: Block):
-        self.check_expression = check_expression
+    def __init__(self, header: str, block: Block, variables: dict):
+        self.variables = variables
+        self.header = header
+        self.check_expression = self.get_check_expression()
         self.block = block
         self.name = 'if'
 
+    def get_check_expression(self) -> Expression:
+        return Expression(self.clear(), self.variables)
+
+    def clear(self):
+        if self.header.startswith('If('):
+            return self.header[:-1].replace('If(', '')
+        return self.header
+
     def run(self):
-        if self.check_expression.run():
-            self.block.run()
+        if self.check_expression.run().data:
+            return self.block.run()
 
     def __repr__(self):
         exp = str(self.check_expression)
@@ -184,8 +187,10 @@ class If(Construction):
 
 
 class While(Construction):
-    def __init__(self, check_expression: Expression, block: Block):
-        self.check_expression = check_expression
+    def __init__(self, header: str, block: Block, variables: dict):
+        self.variables = variables
+        self.header = header
+        self.check_expression = self.get_check_expression()
         self.block = block
         self.name = 'while'
 
@@ -197,30 +202,74 @@ class While(Construction):
             else:
                 break
         
+    def get_check_expression(self) -> Expression:
+        return Expression(self.clear(), self.variables)
+
+    def clear(self):
+        if self.header.startswith('While('):
+            return self.header[:-1].replace('While(', '')
+        return self.header
+
     def __repr__(self):
-        exp = '(' + str(self.check_expression) + ')'
+        exp = str(self.check_expression)
         block = str(self.block)
         return f'{self.name}{exp}\n{block}'
 
 
+# FIXME работает неправильно
 class For(Construction):
-    pass
+    def __init__(self, header: str, block: Block, variables: dict):
+        self.variables = variables
+        self.header = header
+        self.block = block
+        self.init_expressions()
+        self.name = 'for'
 
-class Main(Construction):
+    def run(self):
+        self.init_expression.run()
+        while True:
+            flag = self.check_expression.run().data         # to get real int, not object
+            if flag:
+                self.block.run()
+                self.increment_expression.run()
+            else:
+                break
+                
+    def init_expressions(self):
+        expressions = [s for s in self.clear().split(';') if s]
+        expressions = [Expression(e, self.variables) for e in expressions]
+        self.init_expression = expressions[0]
+        self.check_expression = expressions[1]
+        self.increment_expression = expressions[2]
+
+    def clear(self):
+        if self.header.startswith('For('):
+            return self.header[:-1].replace('For(', '')
+        return self.header
+
+    def __repr__(self):
+        exp = str(self.check_expression)
+        block = str(self.block)
+        return f'{self.name}{exp}\n{block}'
+
+
+class Main(Block):
     pass
 
 
 if __name__ == '__main__':
     v = {}
-    s = 'Block{a = a + 1;}'
-    b = Block(s, v)
-    check_e = Expression('a < 1700', v)
-    w = While(check_e, b)
+    exp1 = ExpressionBlock('Expr{a=1;}', v);
+    header = 'While(a < 8)'
+    exp2 = ExpressionBlock('Expr{a=a+1}', v);
+    b1 = Block([exp1], v)
+    b2 = Block([exp2], v)
+
+    b1.run()
+    w = While(header, b2, v)
     w.run()
-    print(w)
-
-
-
+    print(v['a'])
+    #print(v['b'])
 
 
 
