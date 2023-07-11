@@ -1,29 +1,10 @@
 from basic_structures import *
 
 
-class Stack():                          # Стек для дерева выражений
-    def __init__(self):                 # костыль, надстройка над list'ом
-        self.list = list()
-
-    def is_empty(self):
-        return len(self.list) == 0
-
-    def pop(self):
-        return self.list.pop()
-
-    def peek(self):
-        return self.list[-1]
-
-    def push(self, data):
-        self.list.append(data)
-
-    def __repr__(self):
-        return str(self.list)
-
 
 class Storage():                            # Хранилище переменных
     def __init__(self, variables):         # и функций в будущем
-        self.variables = variables
+        self.variables: dict = variables
 
     def add(self, variable: Variable) -> None:
         self.variables[variable.name] = variable
@@ -53,7 +34,6 @@ class Storage():                            # Хранилище перемен�
 
 
 class Operation():                                                  # Класс для осуществления и менеджмента
-
     operations: dict[str, ()] = {
             # Операции с приравниванием
             #'+=': lambda lop, rop: lop + rop,
@@ -78,8 +58,8 @@ class Operation():                                                  # Класс
 
     @classmethod
     def __get_object(cls, operand: Object, storage: Storage) -> Object:
-        if operand.type == 'variable':  # Если  операнд -- переменная
-            return storage.get(operand.name).obj          # Извлечем ее значение
+        if operand.type == 'variable':                      # Если  операнд -- переменная
+            return storage.get(operand.name).obj            # Извлечем ее значение
         return operand
 
     @classmethod
@@ -87,6 +67,7 @@ class Operation():                                                  # Класс
         lop = cls.__get_object(lop, storage)
         rop = cls.__get_object(rop, storage)
         return lop.type == rop.type
+
 
     # В приравнивании левый операнд всегда переменная
     @classmethod
@@ -111,6 +92,13 @@ class Operation():                                                  # Класс
             return cls.equate(lop, rop, storage)
         else:
             return cls.operate(lop, rop, op, storage)
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':

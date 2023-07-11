@@ -1,5 +1,5 @@
 from re import fullmatch, compile, findall, match
-from service_structures import Stack
+from stack import Stack
 
 
 # Определение регулярных выражений для паттернов типов и имен типов

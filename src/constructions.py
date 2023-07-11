@@ -1,34 +1,37 @@
 from re import fullmatch, compile, match
+from stack import Stack
 from utils import infix_to_postfix, token_type
 from basic_structures import *
-from service_structures import *
+from service_structures import Storage, Operation
 
 
 
 class Construction():
+    regex: str = ''
+    name: str = 'Construction'
     def __repr__(self):
-        return 'construction'
+        return 'Construction'
 
 
 class Expression(Construction):                                     # Выражение состоит из одного или нескольких базовых выражений
+    name: str = 'Expression'
     def __init__(self, string: str, storage: Storage):
         self.storage: Storage = storage
         self.string: str = string
         self.postfix: list[str] = infix_to_postfix(self.clear())
-        self.name: str = 'expression'
 
     def clear(self):
         if self.string.startswith('Expr{'):
             return self.string[:-1].replace('Expr{', '')
         return self.string
         
-    def run(self):                                              # создаем конвейер из элементарных выражений
+    def run(self):                                                  # создаем конвейер из элементарных выражений
         result: Integer
         stack: Stack = Stack()
         for token in self.postfix:
             tok_type = token_type(token)
 
-            if tok_type == 'operation':                       # если переменная если оператор -- создаем базовую операцию
+            if tok_type == 'operation':                             # если переменная если оператор -- создаем базовую операцию
                 rop = stack.pop()
                 lop = stack.pop()
                 op = token
@@ -43,14 +46,13 @@ class Expression(Construction):                                     # Выраж
                 # чтобы засунутть в стек неоч логично
                 # лучше уж на ходу здесь токены в объекты валидировать
                 #result = basic_expression.run()
-                stack.push(result)                              # помещаем результат выражения в обратно в стек
+                stack.push(result)                                  # помещаем результат выражения в обратно в стек
             else:
-                # Фнукция создания объекта из строки
-                # одна, универсальная
-                obj = self.validate_operand(token, tok_type, self.storage)
-                stack.push(obj)                               # помещаем в стек
 
-        return result # для использования в условиях и циклах
+                obj = self.validate_operand(token, tok_type, self.storage)
+                stack.push(obj)                                     # помещаем в стек
+
+        return result                                               # для использования в условиях и циклах
 
 
     @classmethod
@@ -78,15 +80,16 @@ class Expression(Construction):                                     # Выраж
         return obj
 
     def __repr__(self):
-        return f'{self.name} {self.string};'
+        return f'{self.string};'
 
 
 class ExpressionBlock(Construction):
+    regex: str = "Expr"
+    name: str = 'Expr'
     def __init__(self, string: str, storage: Storage):
         self.storage: Storage = storage
         self.string: str = string
         self.expressions: list[Expression] = self.string_to_expressions()
-        self.name: str = 'expression block'
 
     def string_to_expressions(self):
         string = self.clear()
@@ -112,10 +115,11 @@ class ExpressionBlock(Construction):
 
 
 class Block(Construction):
+    regex:str = 'Block'
     def __init__(self, constructions: list[Construction], storage: Storage):
         self.storage: Storage = storage
         self.constructions: list[Constructio] = constructions
-        self.name: str = 'block'
+        self.name: str = 'Block'
 
     def run(self):
         result: Object = Integer(0)
@@ -130,12 +134,13 @@ class Block(Construction):
 
 
 class If(Construction):
+    regex: str = 'If\(.*?\)'
+    name = 'If'
     def __init__(self, header: str, block: Block, storage: Storage):
         self.storage: Storage = storage
         self.header = header
         self.check_expression = self.get_check_expression()
         self.block = block
-        self.name = 'if'
 
     def get_check_expression(self) -> Expression:
         return Expression(self.clear(), self.storage)
@@ -158,12 +163,13 @@ class If(Construction):
 
 
 class While(Construction):
+    regex: str = 'While\(.*?\)'
+    name = 'While'
     def __init__(self, header: str, block: Block, storage: Storage):
         self.storage: Storage = storage
         self.header = header
         self.check_expression = self.get_check_expression()
         self.block = block
-        self.name = 'while'
 
     def run(self) -> Object:
         result: Object = Integer(0)
@@ -184,18 +190,18 @@ class While(Construction):
         return self.header
 
     def __repr__(self):
-        exp = str(self.check_expression)
         block = str(self.block)
-        return f'{self.name}{exp}\n{block}'
+        return f'{self.header}\n{block}'
 
 
 class For(Construction):
+    regex: str = 'For\(.*?\)'
+    name = 'For'
     def __init__(self, header: str, block: Block, storage: Storage):
         self.storage: Storage = storage
         self.header = header
         self.block = block
         self.init_expressions()
-        self.name = 'for'
 
     def run(self) -> Object:
         self.init_expression.run()
@@ -222,27 +228,54 @@ class For(Construction):
         return self.header
 
     def __repr__(self):
-        exp = str(self.check_expression)
         block = str(self.block)
-        return f'{self.name}{exp}\n{block}'
-
+        return f'{self.header}\n{block}'
 
 class Main(Block):
-    pass
+    regex :str = 'Main'
+    name: str = 'Main'
+
+
+
+global CONSTRUCTIONS_OBJECTS
+CONSTRUCTIONS_OBJECTS = [ExpressionBlock, Block, If, While, For, Main]
+global CONSTRUCTIONS_HEADS
+CONSTRUCTIONS_HEADS = {c.name: c for c in CONSTRUCTIONS_OBJECTS}
+global CONSTRUCTIONS_TYPES
+CONSTRUCTIONS_TYPES = {c.regex: c for c in CONSTRUCTIONS_OBJECTS}
+
+
+class Builder():
+    @classmethod
+    def __get_constructor(cls, header: str) -> object:
+        
+        for head in CONSTRUCTIONS_HEADS.keys():
+            if header.startswith(head):
+                return CONSTRUCTIONS_HEADS[head]
+
+        return None
+
+    @classmethod
+    def create_construction(cls, header: str, block: Block, storage: Storage) -> Construction:
+        obj = cls.__get_constructor(header)
+        if header.startswith('Expr'):
+            return obj(header, storage)
+
+        return obj(header, block, storage)
 
 
 if __name__ == '__main__':
     s = Storage({})
     header = 'For(a=18;a>4;a=a-1)'
     exp1 = ExpressionBlock('Expr{}', s);
-    exp2 = ExpressionBlock('Expr{}', s);
+    exp2 = ExpressionBlock('Expr{c = c*2}', s);
     b1 = Block([exp1], s)
     b2 = Block([exp2], s)
 
     b1.run()
     f = For(header, b2, s)
     f.run()
-    print(s.get('a'))
+    print(Builder.create_construction('While(a>4;)', b2, s))
 
 
 
