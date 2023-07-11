@@ -20,10 +20,10 @@ class ConstructionTree():
     # Регулярка для нахождения первой конструкции что попадется
     pattern = compile('|'.join(_ for _ in CONSTRUCTIONS_TYPES.keys()))
 
-    def __init__(self, text: str):
+    def __init__(self, text: str, storage: Storage):
         self.text = text
         self.root = self.parse(self.text, 'Main')
-        self.storage: Storage = Storage({})
+        self.storage: Storage = storage
 
 
     def parse(self, text: str, header: str):
@@ -105,7 +105,8 @@ Expr{a=a+1}
 Expr{a=a-0}
     '''
     text = text.replace('\n', '').replace(' ', '')
-    t = ConstructionTree(text)
+    s = Storage({})
+    t = ConstructionTree(text, s)
     t.print()
-    #t.reduce()
-    #print(t.run())
+    # print(t.reduce())
+    print(t.run())

@@ -2,6 +2,7 @@ import re
 from constructions import Expression
 from basic_structures import Variable
 from service_structures import Storage
+from construction_tree import ConstructionTree
 
 def main():
     print(
@@ -42,6 +43,9 @@ def main():
                         print(CURSOR_UP_ONE+ERASE_LINE+input_string+inp)
                     buf += inp
                 outp = buf                  # buf перекидывать в магическую функию построения дерева
+                t = ConstructionTree(buf, variables)
+                outp = t.run()
+
             elif re.fullmatch(variable_pattern, inp):
                 outp = variables.get(inp)  
             else:
