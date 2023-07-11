@@ -169,7 +169,7 @@ BASIC_TYPES: dict[str: Object] = {obj.type: obj for obj in BASIC_OBJECTS}
 
 
 if __name__ == '__main__':
-    s1 = String('"a"')
-    s2 = String('"b"')
+    s1 = String('""')
+    s2 = String('"s"')
 
     print(s1.data + s2.data)

@@ -176,7 +176,7 @@ class While(Construction):
         while True:
             flag = self.check_expression.run().data         # to get real int, not object
             if flag:
-                self.block.run()
+                result = self.block.run()
             else:
                 break
         return result
