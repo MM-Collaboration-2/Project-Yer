@@ -88,7 +88,7 @@ class ConstructionTree():
     @classmethod
     def __print(cls, node: Node, t=0):
         if node.data.startswith('Expr'):
-            print('    '*t, f'{node.data}' + '}')
+            print('    '*t, f'{node.data}')
         else:
             print('    '*t, node.data, '{')
             for n in node.subnodes:
@@ -98,28 +98,14 @@ class ConstructionTree():
 
 if __name__ == '__main__':
     text = '''
-If(3 > 1){
-    Expr{
-        a = 11;
-        b = a * 2;
-        b = a * 3;
-    }
-    For(a=1;a<4;a=a+1;){
-        Expr{
-            b = a * 4;
-        }
-    }
-    While(b>4){
-        Expr{
-            b=b-2;
-        }
-    }
+Expr{a=0}
+While(a<12){
+Expr{a=a+1}
 }
-Expr{
-    c = 19;
-}
+Expr{a=a-0}
     '''
     text = text.replace('\n', '').replace(' ', '')
     t = ConstructionTree(text)
-    #t.print()
-    print(t.run())
+    t.print()
+    #t.reduce()
+    #print(t.run())
