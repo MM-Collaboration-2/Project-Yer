@@ -1,7 +1,9 @@
+import re
 from constructions import Expression
+from basic_structures import Variable
+from service_structures import Storage
 
 def main():
-    variables = {}
     print(
 ''' \tМожно создавать переменные и присваивать им значения. 
     \tМожно использовать в выражениях. 
@@ -17,15 +19,34 @@ def main():
     ''')
 
     inp = ''
+    buf = ''
+    CURSOR_UP_ONE = '\x1b[1A'
+    ERASE_LINE = '\x1b[2K' 
+    variable_pattern = Variable("test").regex
+    variables = Storage({})
     while inp != 'q':
-        inp = input('>>> ')
+        input_string = '>>> '
+        inp = input(input_string)
         if len(inp) == 0:
             continue
-        elif len(inp) == 1:
-            outp = variables.get(inp, inp)
         else:
-            exp = Expression(inp, variables)
-            outp = exp.run()
+            if re.fullmatch('.*{', inp):
+                bracket_diff = 1
+                buf = inp
+                input_string = '>>> ' + bracket_diff * '  '
+                while(bracket_diff > 0):
+                    inp = input(input_string)               # inp - всегда текущая строка
+                    bracket_diff += inp.count('{') - inp.count('}')
+                    input_string = '>>> ' + bracket_diff * '  '
+                    if re.fullmatch('}.*', inp):
+                        print(CURSOR_UP_ONE+ERASE_LINE+input_string+inp)
+                    buf += inp
+                outp = buf                  # buf перекидывать в магическую функию построения дерева
+            elif re.fullmatch(variable_pattern, inp):
+                outp = variables.get(inp)  
+            else:
+                exp = Expression(inp, variables)
+                outp = exp.run()
         print(outp)
 
 main()

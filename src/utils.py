@@ -8,7 +8,7 @@ token_types: dict[str, str] = {
                              '[+\-*/=<>][=]?': 'operation', # первым делом операция, чтобы отличить от отрицательныъ чисел
                              '-?\d+\.\d+': 'float',
                              '[-]?\d+': 'integer',
-                             '[a-zA-Z][a-zA-Z0-9_]*': 'variable',
+                             '[\u263a-\U0001f645а-яА-Яa-zA-Z][\u263a-\U0001f645а-яА-Яa-zA-Z0-9_]*': 'variable',
                              '\".*?\"': 'string',
                              '\[.*\]': 'list',
                              '\(': 'open_bracket',
