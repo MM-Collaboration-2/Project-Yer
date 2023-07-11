@@ -32,7 +32,7 @@ def main():
             continue
         else:
             if re.fullmatch('.*{', inp):
-                bracket_diff = 1
+                bracket_diff = inp.count('{') - inp.count('}')
                 buf = inp
                 input_string = '>>> ' + bracket_diff * '  '
                 while(bracket_diff > 0):
