@@ -14,7 +14,7 @@ class Construction():
 
 
 class Expression(Construction):                                     # Выражение состоит из одного или нескольких базовых выражений
-    name: str = 'Expression'
+    name: str = 'Exprssion'
     def __init__(self, string: str, storage: Storage):
         self.storage: Storage = storage
         self.string: str = string
@@ -159,7 +159,7 @@ class If(Construction):
     def __repr__(self):
         exp = str(self.check_expression)
         block = str(self.block)
-        return f'{self.name}\n{exp}\n{block}'
+        return f'{self.header}\n{block}'
 
 
 class While(Construction):
@@ -235,6 +235,10 @@ class Main(Block):
     regex :str = 'Main'
     name: str = 'Main'
 
+    def __repr__(self):
+        block = '\n'.join(str(c) for c in self.constructions)
+        block =  f'{self.name}' +'{' + f'\n{block}\n' + '}'
+        return block
 
 
 global CONSTRUCTIONS_OBJECTS
@@ -248,20 +252,26 @@ CONSTRUCTIONS_TYPES = {c.regex: c for c in CONSTRUCTIONS_OBJECTS}
 class Builder():
     @classmethod
     def __get_constructor(cls, header: str) -> object:
-        
         for head in CONSTRUCTIONS_HEADS.keys():
             if header.startswith(head):
                 return CONSTRUCTIONS_HEADS[head]
-
         return None
 
-    @classmethod
-    def create_construction(cls, header: str, block: Block, storage: Storage) -> Construction:
-        obj = cls.__get_constructor(header)
-        if header.startswith('Expr'):
-            return obj(header, storage)
 
-        return obj(header, block, storage)
+    @classmethod
+    def create_construction(cls, header: str, constructions: list[Construction], storage: Storage) -> Construction:
+
+        obj = cls.__get_constructor(header)
+
+        if obj.name == 'Expr':
+            return ExpressionBlock(header, storage)
+
+        elif obj.name == 'Main' or obj.name == 'Block':
+            return obj(constructions, storage)
+
+        else:
+            block = Block(constructions, storage)
+            return obj(header, block, storage)
 
 
 if __name__ == '__main__':
@@ -275,7 +285,8 @@ if __name__ == '__main__':
     b1.run()
     f = For(header, b2, s)
     f.run()
-    print(Builder.create_construction('While(a>4;)', b2, s))
+    #print(Builder.create_construction('Expr{i = 1489;j="aaa";}', [], s))
+    print(Builder.create_construction('While(a>4;)', [], s))
 
 
 

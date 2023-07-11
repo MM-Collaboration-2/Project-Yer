@@ -15,23 +15,23 @@ class Node():
 
 
 
-
-
 class ConstructionTree():
 
     # Регулярка для нахождения первой конструкции что попадется
     pattern = compile('|'.join(_ for _ in CONSTRUCTIONS_TYPES.keys()))
 
-    def __init__(self, root=None):
-        self.root = Node('Main')
+    def __init__(self, text: str):
+        self.text = text
+        self.root = self.parse(self.text, 'Main')
+        self.storage: Storage = Storage({})
 
 
-    def parse(text: str, header: str):
+    def parse(self, text: str, header: str):
         node = Node(header, [])                         # заголовок конструкции
 
         while len(text) > 0:
 
-            m = search(pattern, text)
+            m = search(self.pattern, text)
             new_header = text[m.start():m.end()]        # заголовок новой конструкции
             start_body = end_body = m.end()
             stack = Stack()
@@ -48,12 +48,12 @@ class ConstructionTree():
             # если найденная конструкция -- выражение
             # добавляем ноду с выражением. В глубину не парсим
             if new_header == 'Expr':
-                new_node = Node(text[m.start():end_body], [])
+                new_node = Node(text[m.start():end_body+1], [])
 
             # если любая другая конструкция
             # парсим ее в глубину
             else:
-                new_node = parse(text[start_body+1:end_body], new_header)
+                new_node = self.parse(text[start_body+1:end_body], new_header)
 
             node.subnodes.append(new_node)
 
@@ -61,44 +61,65 @@ class ConstructionTree():
             # идем дальше
             text = text[end_body+1:]
 
-            print(f'{node.data}', node.subnodes)
-
         return node
 
-def print_tree(node, t=0):
-    if node.data.startswith('Expr'):
-        print('    '*t, f'{node.data}' + '}')
-    else:
-        print('    '*t, node.data, '{')
-        for n in node.subnodes:
-            print_tree(n, t+1)
-        print('    '*t, '}')
+    def run(self):
+        return self.reduce().run()
+
+
+    def reduce(self):
+        return self.__reduce(self.root, self.storage)
+
+    @classmethod
+    def __reduce(cls, node: Node, storage: Storage) -> Construction:
+        if node.data.startswith('Expr'):
+            obj = ExpressionBlock(node.data, storage)
+            return obj
+        else:
+            lst = [cls.__reduce(n, storage) for n in node.subnodes]
+            obj: Construction = Builder.create_construction(node.data, lst, storage)
+            return obj
+
+
+    
+    def print(self):
+        self.__print(self.root)
+
+    @classmethod
+    def __print(cls, node: Node, t=0):
+        if node.data.startswith('Expr'):
+            print('    '*t, f'{node.data}' + '}')
+        else:
+            print('    '*t, node.data, '{')
+            for n in node.subnodes:
+                cls.__print(n, t+1)
+            print('    '*t, '}')
 
 
 if __name__ == '__main__':
     text = '''
-    If(3 > 1){
-        Expr{
-            a = 11;
-            b = a * 2;
-            b = a * 3;
-        }
-        For(a=1;a<4;a=a+1;){
-            Expr{
-                b = a * 4;
-            }
-        }
-        While(b>4){
-            Expr{
-                b=b-2;
-            }
-        }
-    }
+If(3 > 1){
     Expr{
-        c = 19;
+        a = 11;
+        b = a * 2;
+        b = a * 3;
     }
+    For(a=1;a<4;a=a+1;){
+        Expr{
+            b = a * 4;
+        }
+    }
+    While(b>4){
+        Expr{
+            b=b-2;
+        }
+    }
+}
+Expr{
+    c = 19;
+}
     '''
     text = text.replace('\n', '').replace(' ', '')
-    header = 'Main'
-    n = parse(text, header)
-    #print_tree(n)
+    t = ConstructionTree(text)
+    #t.print()
+    print(t.run())
