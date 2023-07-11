@@ -9,6 +9,7 @@ token_types: dict[str, str] = {
                              '[-]?\d+': 'integer',
                              '[+\-*/=<>][=]?': 'operation', # первым делом операция, чтобы отличить от отрицательныъ чисел
                              '[\u263a-\U0001f645а-яА-Яa-zA-Z][\u263a-\U0001f645а-яА-Яa-zA-Z0-9_]*': 'variable',
+                             '[a-zA-Z][a-zA-Z0-9_]*\(.*?\)': 'function',
                              '\".*?\"': 'string',
                              '\[.*\]': 'list',
                              '\(': 'open_bracket',
@@ -82,6 +83,6 @@ def infix_to_postfix(infixexpr) -> list[str]:
 
 
 if __name__ == '__main__':
-    t = tokens('var+=11')
+    t = tokens('a = aboba()')
     print(t)
 

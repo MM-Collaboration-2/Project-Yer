@@ -26,6 +26,33 @@ class ConstructionTree():
         self.storage: Storage = storage
 
 
+    def end_body(self, text) -> int:
+        index = 0
+        bracket_stack = Stack()
+        quotes_stack = Stack()
+
+        while index < len(text) - 1:                # находим конец данной конструкции
+
+            if text[index] == '\"':                 # если кавычка
+                if quotes_stack.is_empty():         # и стек пустой
+                    quotes_stack.push(text[index])  # тудааааа её
+                else:
+                    quotes_stack.pop()              # иначе есвобождаем стек
+
+            if quotes_stack.is_empty():             # только если стек кавычек пуст
+                if text[index] == '{':              # обрабатываем на наличие скобок
+                    bracket_stack.push('{')
+
+                elif text[index] == '}':
+                    bracket_stack.pop()
+
+                    if bracket_stack.is_empty():
+                        break
+            index += 1
+        
+        return index
+
+
     def parse(self, text: str, header: str):
         node = Node(header, [])                         # заголовок конструкции
 
@@ -36,14 +63,7 @@ class ConstructionTree():
             start_body = end_body = m.end()
             stack = Stack()
 
-            while end_body < len(text) - 1:             # находим конец данной конструкции
-                if text[end_body] == '{':
-                    stack.push('{')
-                elif text[end_body] == '}':
-                    stack.pop()
-                    if stack.is_empty():
-                        break
-                end_body += 1
+            end_body = self.end_body(text)             # находим конец данной конструкции
 
             # если найденная конструкция -- выражение
             # добавляем ноду с выражением. В глубину не парсим
@@ -80,7 +100,6 @@ class ConstructionTree():
             obj: Construction = Builder.create_construction(node.data, lst, storage)
             return obj
 
-
     
     def print(self):
         self.__print(self.root)
@@ -98,11 +117,11 @@ class ConstructionTree():
 
 if __name__ == '__main__':
     text = '''
-Expr{a=0}
+Expr{a=0;b="v"}
 While(a<12){
-Expr{a=a+1}
+Expr{a=a+1;b=b+"}"}
 }
-Expr{a=a-0}
+Expr{a="{{"}
     '''
     text = text.replace('\n', '').replace(' ', '')
     s = Storage({})
