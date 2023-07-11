@@ -25,9 +25,18 @@ class String(Object):
     type: str = 'string'
     def __init__(self, string):
         self.data = str(string)
+        self.validate()
+
+    def validate(self):
+        if self.data.startswith('"'):
+            self.data = self.data[1:]
+        if self.data.endswith('"'):
+            self.data = self.data[:-1]
 
     def __repr__(self):
-        return f's#' + str(self.data)
+        return f's#' + '"' + str(self.data) + '"'
+
+
 
 
 class Float(Object):
@@ -160,5 +169,7 @@ BASIC_TYPES: dict[str: Object] = {obj.type: obj for obj in BASIC_OBJECTS}
 
 
 if __name__ == '__main__':
-    s = Float('-0.33')
-    print(s)
+    s1 = String('"a"')
+    s2 = String('"b"')
+
+    print(s1.data + s2.data)

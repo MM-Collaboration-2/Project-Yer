@@ -72,9 +72,6 @@ class Operation():                                                  # Класс
     # В приравнивании левый операнд всегда переменная
     @classmethod
     def equate(cls, lop: Variable, rop: Object, storage: Storage) -> Object:
-        ######
-        if lop.type != 'variable':
-            print('panic1')
         rop = cls.__get_object(rop, storage)
         storage.set(lop.name, rop)
         return rop
@@ -92,9 +89,6 @@ class Operation():                                                  # Класс
     @classmethod
     def run(cls, lop: Object, rop: Object, op: str, storage: Storage):
         if op == '=':
-            ######
-            if lop.type != 'variable':
-                print('panic2')
             return cls.equate(lop, rop, storage)
         else:
             return cls.operate(lop, rop, op, storage)

@@ -48,8 +48,8 @@ class Expression(Construction):                                     # Выраж
                 #result = basic_expression.run()
                 stack.push(result)                                  # помещаем результат выражения в обратно в стек
             else:
-
                 obj = self.validate_operand(token, tok_type, self.storage)
+                
                 stack.push(obj)                                     # помещаем в стек
 
         return result                                               # для использования в условиях и циклах
@@ -278,7 +278,7 @@ if __name__ == '__main__':
     s = Storage({})
     header = 'For(a=18;a>4;a=a-1)'
     exp1 = ExpressionBlock('Expr{}', s);
-    exp2 = ExpressionBlock('Expr{c = c*2}', s);
+    exp2 = ExpressionBlock('Expr{c = "a"}', s);
     b1 = Block([exp1], s)
     b2 = Block([exp2], s)
 
@@ -286,7 +286,7 @@ if __name__ == '__main__':
     f = For(header, b2, s)
     f.run()
     #print(Builder.create_construction('Expr{i = 1489;j="aaa";}', [], s))
-    print(Builder.create_construction('While(a>4;)', [], s))
+    print(f)
 
 
 
