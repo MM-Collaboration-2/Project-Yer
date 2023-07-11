@@ -1,12 +1,16 @@
 from re import fullmatch, compile, findall, match
-from basic import Stack
+from service_structures import Stack
 
 
 # Определение регулярных выражений для паттернов типов и имен типов
 global token_types
-token_types: dict[str, str] = {'[-]?\d+': 'number',
+token_types: dict[str, str] = {
+                             '[+\-*/=<>][=]?': 'operation', # первым делом операция, чтобы отличить от отрицательныъ чисел
+                             '-?\d+\.\d+': 'float',
+                             '[-]?\d+': 'integer',
                              '[a-zA-Z][a-zA-Z0-9_]*': 'variable',
-                             '[+\-*/=<>][=]?': 'operation',
+                             '\".*?\"': 'string',
+                             '\[.*\]': 'list',
                              '\(': 'open_bracket',
                              '\)': 'close_bracket',
                              }
@@ -47,9 +51,15 @@ def infix_to_postfix(infixexpr) -> list[str]:
 
     for token in token_list:
         tok_type = token_type(token)
-        if tok_type == 'number':                    # если число
+        if tok_type == 'integer':                   # если число
             postfix_list.append(token)
-        elif tok_type == 'variable':     # если переменная
+        elif tok_type == 'float':                   # если дробное
+            postfix_list.append(token)
+        elif tok_type == 'string':                  # если строка
+            postfix_list.append(token)
+        elif tok_type == 'variable':                # если переменная
+            postfix_list.append(token)
+        elif tok_type == 'list':                    # если список
             postfix_list.append(token)
         elif tok_type == 'open_bracket':
             op_stack.push( token)
@@ -72,6 +82,6 @@ def infix_to_postfix(infixexpr) -> list[str]:
 
 
 if __name__ == '__main__':
-    t = infix_to_postfix("y = 12 < (a + 2)")
+    t = tokens('var+=11')
     print(t)
 

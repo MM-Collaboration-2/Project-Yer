@@ -155,36 +155,40 @@ class List(Object):
 
 
 class Variable(Object):                 # Переменная. Может хранить число
-    def __init__(self, name, data: Object):   
-        self.type = data.type
+    def __init__(self, name, obj: Object):   
         self.name: str = name           
-        self.data: Object = data
+        self.type = data.type
+        self.obj: Object = obj
 
     def __repr__(self):
-        return f'v#{self.name}=' + str(self.data)
+        return f'v#{self.name}=' + str(self.obj)
 
 
 class Storage():
-    def __init__(self, variables: dict[str, Variable]={}):
-        self.variables = variables
+    def __init__(self, variables):
+        self.variables = {}
 
-    def add(self, varaiable) -> None:
+    def add(self, varaiable: Variable) -> None:
         self.variables[variable.name] = variable
 
-    def remove(self, name) -> None:
+    def set(self, name: str, obj: Object) -> None:
+        if self.declared(name):
+            self.get(name).obj = obj
+
+    def remove(self, name: str) -> None:
         if self.declared:
             del self.variables[name]
 
-    def get(self, name) -> Variable:
+    def get(self, name: str) -> Variable:
         var = self.variables.get(name, None)
         return var
 
-    def declared(self, name) -> bool:
+    def declared(self, name: str) -> bool:
         if self.get(name):
             return True
         return False
 
-    def type(self, name) -> str:
+    def type(self, name: str) -> str:
         if self.declared(name):
             return self.get(name).type
         return ''
