@@ -45,7 +45,7 @@ def main():
                     if re.fullmatch('}.*', inp):
                         print(CURSOR_UP_ONE+ERASE_LINE+input_string+inp)
                     buf += inp
-                t = ConstructionTree(syntax_analysis(buf), variables)
+                t = ConstructionTree(syntax_analysis(buf, logging=True), variables)
                 outp = t.run()
             #elif re.fullmatch(variable_pattern, inp):
                 #outp = variables.get(inp)  

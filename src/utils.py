@@ -81,7 +81,7 @@ def infix_to_postfix(infixexpr) -> list[str]:
 
     return postfix_list
 
-def syntax_analysis(text: str) -> str:
+def syntax_analysis(text: str, logging:bool = False) -> str:
     analysed_text = ''
     brackets_open = ('(', '{', '[')
     brackets_closed = (')', '}', ']')
@@ -110,7 +110,7 @@ def syntax_analysis(text: str) -> str:
                 stack.push(ch)
             elif ch in brackets_closed:    
                 if stack.is_empty(): 
-                    print("Ошибка в расстановке скобочек (нет ни одной открывающей)")
+                    if logging: print("Ошибка в расстановке скобочек (нет ни одной открывающей)")
                     return ''
                 else:
                     index = brackets_closed.index(ch)
@@ -118,11 +118,11 @@ def syntax_analysis(text: str) -> str:
                     if stack.peek() == open_bracket:
                         stack.pop()  
                     else: 
-                        print("Ошибка в расстановке скобочек (последняя скобочка не совпадает с предыдущей, типо '{)')")
+                        if logging: print("Ошибка в расстановке скобочек (последняя скобочка не совпадает с предыдущей, типо '{)')")
                         return ''
 
     if not(stack.is_empty()):
-        print("Ошибка в расстановке скобочек (не хватает закрывающей(их))")
+        if logging: print("Ошибка в расстановке скобочек (не хватает закрывающей(их))")
         return ''
 
     return analysed_text
@@ -132,6 +132,5 @@ def syntax_analysis(text: str) -> str:
 if __name__ == '__main__':
     # t = tokens('a = b(Expr)')
     # print(t)
-    text = 'yell(["aaaraa"]); b=0'
-    print(tokens(text))
-
+    text = 'hello   guys {{{} "{{ds\'никто не увидит, что я ...\'df" '
+    print(syntax_analysis(text, True))
