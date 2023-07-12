@@ -89,6 +89,8 @@ def syntax_analysis(text: str) -> str:
     comment_flag = False
     string_flag = False
     for ch in text:
+        if ch == '\n': # убираем перенос строки
+            continue
         if ch == '\'':
             comment_flag = not(comment_flag)
             continue
@@ -130,6 +132,6 @@ def syntax_analysis(text: str) -> str:
 if __name__ == '__main__':
     # t = tokens('a = b(Expr)')
     # print(t)
-    text = 'hello   guys {} "{{ds\'никто не увидит, что я ...\'df" '
-    print(syntax_analysis(text))
+    text = 'yell(["aaaraa"]); b=0'
+    print(tokens(text))
 

@@ -1,6 +1,6 @@
-from re import search #????
+from re import search
 from stack import Stack
-from utils import infix_to_postfix, token_type
+from utils import infix_to_postfix, token_type, syntax_analysis
 from basic_structures import *
 from operation import Operation
 from storage import Storage
@@ -58,6 +58,15 @@ class Expression(Construction):                                     # Выраж
 
         return result                                               # для использования в условиях и циклах
 
+    @classmethod
+    def validate_list(cls, string: str, storage: Storage) -> List:
+        lst = []
+        objects = tokens(string[1:-1])
+        for token in objects:
+            tok_type = token_type(token)
+            lst.append(cls.validate_operand(token, tok_type, storage))
+        return List(lst)
+    
 
     @classmethod
     def validate_operand(cls, token, tok_type, storage: Storage) -> Object:
@@ -74,8 +83,21 @@ class Expression(Construction):                                     # Выраж
             return variable
 
         elif tok_type == 'function':
-            func = self.storage(get_function(token))
-            obj = func.run() # здесь не помню как, но пришел к такому выводу
+
+            ########
+            if token.startswith('yell'):
+                lst = token[:-1].replace('yell(', '')
+                lst = cls.validate_list(lst, storage)
+                for obj in lst.data:
+                    print(obj)
+                return Integer(len(lst.data))
+            return Integer(0)
+            #######
+
+        elif tok_type == 'list':
+            lst = cls.validate_list(token, storage)
+            print(lst)
+            return lst
         
         else:
             obj: Object = cls.basic_object(token, tok_type)
@@ -86,6 +108,9 @@ class Expression(Construction):                                     # Выраж
     def basic_object(cls, token: str, tok_type: str) -> Object:
         obj = BASIC_TYPES[tok_type](token)
         return obj
+
+    def get_operands_list(token):
+        pass
 
     def __repr__(self):
         return f'{self.string};'
@@ -248,38 +273,28 @@ class Main(Block):
         block =  f'{self.name}' +'{' + f'\n{block}\n' + '}'
         return block
 
+class Function(Construction): # не обязана наследоваться от конструкции. можно в парсинге дерева добавлять в хранилище
+    regex: str = 'Func\(.*?\)'
+    name: str = 'Func'
+
+    def __init__(self, text: str):
+        self.validate(text)
+
+    def validate(self, text: str):
+        m = search(self.regex, text)
+
+        self.head: str = text[m.start():m.end()-1].replace('Func(', '')
+        self.text: str = syntax_analysis(text[m.end()+1:-1])
+
+    def __repr__(self):
+        return 'fn#' + self.head
 
 global CONSTRUCTIONS_OBJECTS
-CONSTRUCTIONS_OBJECTS = [ExpressionBlock, Block, If, While, For, Main]
+CONSTRUCTIONS_OBJECTS = [ExpressionBlock, Block, If, While, For, Main, Function]
 global CONSTRUCTIONS_HEADS
 CONSTRUCTIONS_HEADS = {c.name: c for c in CONSTRUCTIONS_OBJECTS}
 global CONSTRUCTIONS_TYPES
 CONSTRUCTIONS_TYPES = {c.regex: c for c in CONSTRUCTIONS_OBJECTS}
-
-
-class Builder():
-    @classmethod
-    def __get_constructor(cls, header: str) -> object:
-        for head in CONSTRUCTIONS_HEADS.keys():
-            if header.startswith(head):
-                return CONSTRUCTIONS_HEADS[head]
-        return None
-
-
-    @classmethod
-    def create_construction(cls, header: str, constructions: list[Construction], storage: Storage) -> Construction:
-
-        obj = cls.__get_constructor(header)
-
-        if obj.name == 'Expr':
-            return ExpressionBlock(header, storage)
-
-        elif obj.name == 'Main' or obj.name == 'Block':
-            return obj(constructions, storage)
-
-        else:
-            block = Block(constructions, storage)
-            return obj(header, block, storage)
 
 
 if __name__ == '__main__':

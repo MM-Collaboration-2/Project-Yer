@@ -56,19 +56,9 @@ class List(Object):
     regex = '\[.*\]'
     type: str = 'list'
 
-    def __init__(self, objects: str):
-        self.objects: str = objects
-        self.data = self.validate()
+    def __init__(self, data: list[Object]):
+        self.data = data
 
-    def validate(self) -> list[Object]:
-        lst = []
-        objects = tokens(self.objects[1:-1])
-        for obj in objects:
-            obj_type = token_type(obj)
-            lst.append(BASIC_TYPES[obj_type](obj))
-        
-        return lst
-    
     def copy(self):
         l = List(self.objects)
         return l

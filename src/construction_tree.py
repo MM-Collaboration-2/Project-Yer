@@ -1,7 +1,9 @@
 from re import search, compile
 from stack import Stack
-from constructions import Construction, ExpressionBlock, CONSTRUCTIONS_TYPES, Builder
+from builder import Builder
+from constructions import Construction, ExpressionBlock, CONSTRUCTIONS_TYPES
 from storage import Storage 
+from utils import syntax_analysis
 
 
 class Node():
@@ -55,6 +57,8 @@ class ConstructionTree():
 
     def parse(self, text: str, header: str):
         node = Node(header, [])                         # заголовок конструкции
+        ###
+        #print(text)
 
         while len(text) > 0:
 
@@ -67,7 +71,7 @@ class ConstructionTree():
 
             # если найденная конструкция -- выражение
             # добавляем ноду с выражением. В глубину не парсим
-            if new_header == 'Expr':
+            if new_header.startswith('Expr') or new_header.startswith('Func'):
                 new_node = Node(text[m.start():end_body+1], [])
 
             # если любая другая конструкция
@@ -117,15 +121,18 @@ class ConstructionTree():
 
 if __name__ == '__main__':
     text = '''
-Expr{a=0;b="v"}
-While(a<12){
-Expr{a=a+1;b=b+"}"}
-}
-Expr{a="}}"}
-    '''
-    text = text.replace('\n', '').replace(' ', '')
+    'Expr{b=2}'
+    While(a<5){
+        Expr{a=a+1;
+            b=b+2;
+            yell(["aboba", b]);
+        }
+    }
+        '''
+    text = syntax_analysis(text)
     s = Storage({})
     t = ConstructionTree(text, s)
-    t.print()
+    #t.print()
     # print(t.reduce())
-    print(t.run())
+    t.run()
+    #print(t.run())

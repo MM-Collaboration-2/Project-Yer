@@ -13,7 +13,7 @@ class Storage():                            # Хранилище перемен�
         if self.declared(name):
             self.get(name).obj = obj
 
-    def remove(self, name: str) -> None:
+    def remove_variable(self, name: str) -> None:
         if self.declared:
             del self.variables[name]
 

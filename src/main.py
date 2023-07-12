@@ -1,7 +1,7 @@
 import re
 from constructions import Expression
 from basic_structures import Variable
-from service_structures import Storage
+from storage import Storage
 from construction_tree import ConstructionTree
 from utils import syntax_analysis
 
