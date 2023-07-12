@@ -1,12 +1,12 @@
-from re import fullmatch, compile, findall, match
+from re import compile, findall, match
 from stack import Stack
 
 
 # Определение регулярных выражений для паттернов типов и имен типов
 global token_types
 token_types: dict[str, str] = {
-                             '[a-zA-Z_][a-zA-Z0-9_]*^\(': 'variable',
                              '[a-zA-Z_][a-zA-Z0-9_]*\ *\(.*?\)': 'function',
+                             '[a-zA-Z_][a-zA-Z0-9_]*': 'variable',
                              '-?\d+\.\d+': 'float',
                              '[-]?\d+': 'integer',
                              '[+\-*/=<>][=]?': 'operation',
@@ -20,7 +20,7 @@ token_types: dict[str, str] = {
 # Получаем список токенов из строки выражения в инфиксном виде
 def tokens(infixexpr: str):
     d = {}    
-    pattern = '|'.join(t for t in token_types.keys())
+    pattern = compile('|'.join(t for t in token_types.keys()))
     
     return findall(pattern, infixexpr)
 
@@ -83,6 +83,6 @@ def infix_to_postfix(infixexpr) -> list[str]:
 
 
 if __name__ == '__main__':
-    t = tokens('a9 = ( abo8ba (c))')
+    t = tokens('a = b(Expr)')
     print(t)
 

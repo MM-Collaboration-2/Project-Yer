@@ -33,7 +33,7 @@ def main():
         if len(inp) == 0:
             continue
         else:
-            if re.fullmatch('.*{', inp):
+            if re.fullmatch('.*{.*', inp):
                 bracket_diff = inp.count('{') - inp.count('}')
                 buf = inp
                 input_string = '>>> ' + bracket_diff * '  '
@@ -44,7 +44,6 @@ def main():
                     if re.fullmatch('}.*', inp):
                         print(CURSOR_UP_ONE+ERASE_LINE+input_string+inp)
                     buf += inp
-                outp = buf                  # buf перекидывать в магическую функию построения дерева
                 t = ConstructionTree(buf, variables)
                 outp = t.run()
 
