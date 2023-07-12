@@ -6,7 +6,7 @@ from stack import Stack
 global token_types
 token_types: dict[str, str] = {
                              '[a-zA-Z_][a-zA-Z0-9_]*\ *\(.*?\)': 'function',
-                             '[a-zA-Z_][a-zA-Z0-9_]*': 'variable',
+                             '[a-zA-Z_][a-zA-Z0-9_\#]*': 'variable',
                              '-?\d+\.\d+': 'float',
                              '[-]?\d+': 'integer',
                              '[+\-*/=<>][=]?': 'operation',
@@ -83,6 +83,6 @@ def infix_to_postfix(infixexpr) -> list[str]:
 
 
 if __name__ == '__main__':
-    t = tokens('a = b(Expr)')
+    t = tokens('a = argv#1')
     print(t)
 

@@ -1,8 +1,9 @@
-from re import fullmatch, compile, match
+from re import search
 from stack import Stack
 from utils import infix_to_postfix, token_type
 from basic_structures import *
 from service_structures import Storage, Operation
+from construction_tree import ConstructionTree
 
 
 
@@ -249,19 +250,40 @@ class Main(Block):
         return block
 
 
+
+
 class Function():
-    regex: str = ''
+    regex: str = 'Func\(.*?\)'
     name: str = 'Func'
 
-    def __init__(self, params: list[Object], block: Block):
-        self.params = params
-        self.block = block
+    def __init__(self, text: str):
+        self.validate(text)
+
+    def validate(self, text: str):
+        m = search(self.regex, text)
+
+        self.head: str = text[m.start():m.end()-1].replace('Func(', '')
+        self.text: str = text[m.end():]
 
 
+    def run(self, params: list[str], storage: Storage):
+        block = self.get_block(params, storage)
+        return block.run()
+        
 
-    def run(self):
-        pass 
+    def get_block(self, params: list[str], storage: Storage) -> Block:
+        block: Block = ConstructionTree(self.substitute(params), storage).reduce()
+        return block
 
+
+    def substitute(self, params: list[str]) -> str:
+        text = self.text
+        for num, param in enumerate(params):
+            arg_name = 'argv#' + str(num)
+            text = text.replace(arg_name, param)
+
+        
+        return text
 
 
 
@@ -304,18 +326,21 @@ class Builder():
 
 
 if __name__ == '__main__':
-    s = Storage({})
-    header = 'For(a=18;a>4;a=a-1)'
-    exp1 = ExpressionBlock('Expr{}', s);
-    exp2 = ExpressionBlock('Expr{c = "a"}', s);
-    b1 = Block([exp1], s)
-    b2 = Block([exp2], s)
+    text = '''
+Func(foo){
+    While(argv#0>3){
+        Expr{argv#0=argv#0-2;
+            b=b+argv#1;
+            b
+        }
+    }
+}
+'''
 
-    b1.run()
-    f = For(header, b2, s)
-    f.run()
-    #print(Builder.create_construction('Expr{i = 1489;j="aaa";}', [], s))
-    print(f)
+    f = Function(text)
+    l = ['c', 'd', 'e']
+    s = Storage({})
+    f.run(l, s)
 
 
 

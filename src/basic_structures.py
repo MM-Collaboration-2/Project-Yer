@@ -101,6 +101,7 @@ class Variable(Object):                     # Хранит объект
         return f'v#{self.name}=' + str(self.obj)
 
 
+
 global BASIC_OBJECTS
 BASIC_OBJECTS: list[Object] = [Integer, Float, String, List, Variable]
 global BASIC_TYPES

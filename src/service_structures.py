@@ -3,8 +3,9 @@ from basic_structures import *
 
 
 class Storage():                            # Хранилище переменных
-    def __init__(self, variables):         # и функций в будущем
+    def __init__(self, variables: dict, functions: dict={}):         # и функций в будущем
         self.variables: dict = variables
+        self.functions: dict = functions
 
     def add(self, variable: Variable) -> None:
         self.variables[variable.name] = variable
