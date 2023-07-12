@@ -5,9 +5,9 @@ from constructions import *
 
 
 class Node():
-    def __init__(self, data: str, subnodes: list[Node]=[]):
+    def __init__(self, data: str, subnodes=[]):
         self.data: str = data
-        self.subnodes: list[Node] = subnodes
+        self.subnodes = subnodes
         self.variables = {}
 
     def __repr__(self):

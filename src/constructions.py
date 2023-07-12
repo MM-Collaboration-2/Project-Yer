@@ -26,7 +26,7 @@ class Expression(Construction):                                     # Выраж
         return self.string
         
     def run(self):                                                  # создаем конвейер из элементарных выражений
-        result: Integer
+        result: Object
         stack: Stack = Stack()
         for token in self.postfix:
             tok_type = token_type(token)
@@ -48,7 +48,11 @@ class Expression(Construction):                                     # Выраж
                 #result = basic_expression.run()
                 stack.push(result)                                  # помещаем результат выражения в обратно в стек
             else:
-                obj = self.validate_operand(token, tok_type, self.storage)
+
+
+                obj = self.validate_operand(token, tok_type, self.storage)  # чтобы возвращать последний добавленный операндб в случае если
+                                                                            # экспрешн состоит из одного операнда
+                result = obj
                 
                 stack.push(obj)                                     # помещаем в стек
 
@@ -68,6 +72,10 @@ class Expression(Construction):                                     # Выраж
                 storage.add(variable);
             
             return variable
+
+        elif tok_type == 'function':
+            func = self.storage(get_function(token))
+            obj = func.run() # здесь не помню как, но пришел к такому выводу
         
         else:
             obj: Object = cls.basic_object(token, tok_type)
@@ -241,6 +249,22 @@ class Main(Block):
         return block
 
 
+class Function():
+    regex: str = ''
+    name: str = 'Func'
+
+    def __init__(self, params: list[Object], block: Block):
+        self.params = params
+        self.block = block
+
+
+
+    def run(self):
+        pass 
+
+
+
+
 global CONSTRUCTIONS_OBJECTS
 CONSTRUCTIONS_OBJECTS = [ExpressionBlock, Block, If, While, For, Main]
 global CONSTRUCTIONS_HEADS
@@ -268,6 +292,11 @@ class Builder():
 
         elif obj.name == 'Main' or obj.name == 'Block':
             return obj(constructions, storage)
+
+        elif obj.name == 'Func':
+            #block = Block(constructions, storage)
+            #self.storage.add_function(header
+            return Block([], storage)
 
         else:
             block = Block(constructions, storage)
