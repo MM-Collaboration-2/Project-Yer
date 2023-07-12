@@ -1,7 +1,7 @@
 import re
 from constructions import Expression
 from basic_structures import Variable
-from service_structures import Storage
+from storage import Storage
 from construction_tree import ConstructionTree
 from utils import syntax_analysis
 
@@ -45,7 +45,7 @@ def main():
                     if re.fullmatch('}.*', inp):
                         print(CURSOR_UP_ONE+ERASE_LINE+input_string+inp)
                     buf += inp
-                t = ConstructionTree(syntax_analysis(buf), variables)
+                t = ConstructionTree(syntax_analysis(buf, logging=True), variables)
                 outp = t.run()
             #elif re.fullmatch(variable_pattern, inp):
                 #outp = variables.get(inp)  
