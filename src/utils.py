@@ -5,11 +5,11 @@ from stack import Stack
 # Определение регулярных выражений для паттернов типов и имен типов
 global token_types
 token_types: dict[str, str] = {
+                             '[a-zA-Z_][a-zA-Z0-9_]*^\(': 'variable',
+                             '[a-zA-Z_][a-zA-Z0-9_]*\ *\(.*?\)': 'function',
                              '-?\d+\.\d+': 'float',
                              '[-]?\d+': 'integer',
-                             '[+\-*/=<>][=]?': 'operation', # первым делом операция, чтобы отличить от отрицательныъ чисел
-                             '[\u263a-\U0001f645а-яА-Яa-zA-Z][\u263a-\U0001f645а-яА-Яa-zA-Z0-9_]*': 'variable',
-                             '[a-zA-Z][a-zA-Z0-9_]*\(.*?\)': 'function',
+                             '[+\-*/=<>][=]?': 'operation',
                              '\".*?\"': 'string',
                              '\[.*\]': 'list',
                              '\(': 'open_bracket',
@@ -83,6 +83,6 @@ def infix_to_postfix(infixexpr) -> list[str]:
 
 
 if __name__ == '__main__':
-    t = tokens('a = aboba()')
+    t = tokens('a9 = ( abo8ba (c))')
     print(t)
 

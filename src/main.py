@@ -25,9 +25,11 @@ def main():
     ERASE_LINE = '\x1b[2K' 
     variable_pattern = Variable("test").regex
     variables = Storage({})
-    while inp != 'q':
+    while True:
         input_string = '>>> '
         inp = input(input_string)
+        if inp == 'q':
+            break
         if len(inp) == 0:
             continue
         else:
