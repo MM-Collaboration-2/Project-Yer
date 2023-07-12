@@ -81,8 +81,55 @@ def infix_to_postfix(infixexpr) -> list[str]:
 
     return postfix_list
 
+def syntax_analysis(text: str) -> str:
+    analysed_text = ''
+    brackets_open = ('(', '{', '[')
+    brackets_closed = (')', '}', ']')
+    stack = Stack()
+    comment_flag = False
+    string_flag = False
+    for ch in text:
+        if ch == '\'':
+            comment_flag = not(comment_flag)
+            continue
+        if comment_flag:
+            continue
+        if ch == '"':
+            string_flag = not(string_flag)
+            analysed_text += ch
+            continue
+        if string_flag:
+            analysed_text += ch
+            continue
+        else:
+            if ch != ' ': #табы тоже чекаются
+                analysed_text += ch
+            if ch in brackets_open:
+                stack.push(ch)
+            elif ch in brackets_closed:    
+                if stack.is_empty(): 
+                    print("Ошибка в расстановке скобочек (нет ни одной открывающей)")
+                    return ''
+                else:
+                    index = brackets_closed.index(ch)
+                    open_bracket = brackets_open[index]
+                    if stack.peek() == open_bracket:
+                        stack.pop()  
+                    else: 
+                        print("Ошибка в расстановке скобочек (последняя скобочка не совпадает с предыдущей, типо '{)')")
+                        return ''
+
+    if not(stack.is_empty()):
+        print("Ошибка в расстановке скобочек (не хватает закрывающей(их))")
+        return ''
+
+    return analysed_text
+    
+
 
 if __name__ == '__main__':
-    t = tokens('a = argv#1')
-    print(t)
+    # t = tokens('a = b(Expr)')
+    # print(t)
+    text = 'hello   guys {} "{{ds\'никто не увидит, что я ...\'df" '
+    print(syntax_analysis(text))
 
