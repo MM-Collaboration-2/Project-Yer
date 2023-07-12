@@ -1,4 +1,5 @@
 ## Yer basic objects
+from utils import tokens, token_type
 
 class Object():
     regex = '.*?'
@@ -49,105 +50,44 @@ class Float(Object):
         return f'f#' + str(self.data)
 
 
-class Node(Object):
-    regex = ''
-    type: str = 'list_node'
-    def __init__(self, data: Object):
-        self.data = data
-        self.next = None
-
-    def __repr__(self):
-        return f'n#' + str(self.data)
 
 
 class List(Object):
     regex = '\[.*\]'
     type: str = 'list'
-    def __init__(self, elements=None):
-        self.start = None
-        self.end = None
-        self.data = None
 
-        if elements:
-            for element in elements:
-                self.append(element)
+    def __init__(self, objects: str):
+        self.objects: str = objects
+        self.data = self.validate()
+
+    def validate(self) -> list[Object]:
+        lst = []
+        objects = tokens(self.objects[1:-1])
+        for obj in objects:
+            obj_type = token_type(obj)
+            lst.append(BASIC_TYPES[obj_type](obj))
+        
+        return lst
+    
+    def copy(self):
+        l = List(self.objects)
+        return l
+
+    def add(self, obj: Object):
+        self.data.append(obj)
+
+    def remove(self, index: int):
+        self.data.remove[index]
+
+    def len(self) -> int:
+        return len(self.data)
+
+    def get(self, index: int) -> Object:
+        return self.data[index]
 
     def __repr__(self):
-        return 'l#[{}]'.format(', '.join(str(i) for i in self))
+        return 'l#' + str(self.data)
 
-    def __len__(self):
-        return self.length()
-
-    def __iter__(self):
-        node = self.start
-        while node: 
-            yield node
-            node = node.next 
-        
-    def __add__(self, other):
-        left_list = copy.deepcopy(self)
-        right_list = copy.deepcopy(other)
-        if not left_list.start:
-            return right_list
-        if not right_list.start:
-            return left_list
-        
-        left_list.end.next = right_list.start 
-        left_list.end = right_list.end 
-        return left_list
-
-    def __iadd__(self, other):
-        self = self + other
-        return self
-
-    def __eq__(self, other):
-        if self.length() != other.length():
-            return False
-        for i,j in zip(self, other):
-            if i != j: 
-                return False
-        return True
-
-    def append(self, data):
-        node = Node(data)
-        if not self.start: 
-            self.start = node
-        else: 
-            self.end.next = node 
-        self.end = node 
-            
-    def get(self, index):
-        if not 0 <= index < self.length():
-            raise IndexError
-        for pos, node in enumerate(self):
-            if pos == index:
-                return node
- 
-    def length(self):
-        return sum(1 for _ in self)
-        
-    def pop(self, index=None):
-        list_length = self.length()
-        if index == None: 
-            index = list_length - 1 
-        if not 0 <= index < list_length:
-            raise IndexError
-        node_to_remove = self[index] 
-        if index == 0: 
-            if list_length == 1: 
-                self.start = None
-                self.end = None
-            else:
-                self.start = self[1] 
-        elif index == list_length - 1: 
-            node_before = self[index-1]
-            node_before.next = None
-            self.end = node_before
-        else: 
-            node_before = self[index-1] 
-            node_after = self[index+1] 
-            node_before.next = node_after 
-        return node_to_remove
 
 
 class Variable(Object):                     # Хранит объект
@@ -162,14 +102,14 @@ class Variable(Object):                     # Хранит объект
 
 
 global BASIC_OBJECTS
-BASIC_OBJECTS: list[Object] = [Integer, Float, String, List]
+BASIC_OBJECTS: list[Object] = [Integer, Float, String, List, Variable]
 global BASIC_TYPES
 BASIC_TYPES: dict[str: Object] = {obj.type: obj for obj in BASIC_OBJECTS}
 
 
 
 if __name__ == '__main__':
-    s1 = String('""')
-    s2 = String('"s"')
+    l = List('[a,-2,0.43,]')
+    v = Variable('lst', l)
+    print(v)
 
-    print(s1.data + s2.data)
