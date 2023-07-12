@@ -1,10 +1,9 @@
-from re import search
+from re import search #????
 from stack import Stack
 from utils import infix_to_postfix, token_type
 from basic_structures import *
-from service_structures import Storage, Operation
-from construction_tree import ConstructionTree
-
+from operation import Operation
+from storage import Storage
 
 
 class Construction():
@@ -250,43 +249,6 @@ class Main(Block):
         return block
 
 
-
-
-class Function():
-    regex: str = 'Func\(.*?\)'
-    name: str = 'Func'
-
-    def __init__(self, text: str):
-        self.validate(text)
-
-    def validate(self, text: str):
-        m = search(self.regex, text)
-
-        self.head: str = text[m.start():m.end()-1].replace('Func(', '')
-        self.text: str = text[m.end():]
-
-
-    def run(self, params: list[str], storage: Storage):
-        block = self.get_block(params, storage)
-        return block.run()
-        
-
-    def get_block(self, params: list[str], storage: Storage) -> Block:
-        block: Block = ConstructionTree(self.substitute(params), storage).reduce()
-        return block
-
-
-    def substitute(self, params: list[str]) -> str:
-        text = self.text
-        for num, param in enumerate(params):
-            arg_name = 'argv#' + str(num)
-            text = text.replace(arg_name, param)
-
-        
-        return text
-
-
-
 global CONSTRUCTIONS_OBJECTS
 CONSTRUCTIONS_OBJECTS = [ExpressionBlock, Block, If, While, For, Main]
 global CONSTRUCTIONS_HEADS
@@ -315,32 +277,10 @@ class Builder():
         elif obj.name == 'Main' or obj.name == 'Block':
             return obj(constructions, storage)
 
-        elif obj.name == 'Func':
-            #block = Block(constructions, storage)
-            #self.storage.add_function(header
-            return Block([], storage)
-
         else:
             block = Block(constructions, storage)
             return obj(header, block, storage)
 
 
 if __name__ == '__main__':
-    text = '''
-Func(foo){
-    While(argv#0>3){
-        Expr{argv#0=argv#0-2;
-            b=b+argv#1;
-            b
-        }
-    }
-}
-'''
-
-    f = Function(text)
-    l = ['c', 'd', 'e']
-    s = Storage({})
-    f.run(l, s)
-
-
-
+    pass

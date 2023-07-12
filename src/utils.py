@@ -1,10 +1,10 @@
-from re import compile, findall, match
+from re import findall, match
 from stack import Stack
 
 
 # Определение регулярных выражений для паттернов типов и имен типов
-global token_types
-token_types: dict[str, str] = {
+global TOKEN_TYPES
+TOKEN_TYPES: dict[str, str] = {
                              '[a-zA-Z_][a-zA-Z0-9_]*\ *\(.*?\)': 'function',
                              '[a-zA-Z_][a-zA-Z0-9_\#]*': 'variable',
                              '-?\d+\.\d+': 'float',
@@ -20,14 +20,14 @@ token_types: dict[str, str] = {
 # Получаем список токенов из строки выражения в инфиксном виде
 def tokens(infixexpr: str):
     d = {}    
-    pattern = compile('|'.join(t for t in token_types.keys()))
+    pattern = '|'.join(t for t in TOKEN_TYPES.keys())
     
     return findall(pattern, infixexpr)
 
 
 # Определяем тип токена
 def token_type(token: str) -> str:
-    for pattern, token_type in token_types.items():
+    for pattern, token_type in TOKEN_TYPES.items():
         if match(pattern, token):
             return token_type
     return 'other'

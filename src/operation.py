@@ -1,37 +1,5 @@
-from basic_structures import *
-
-
-
-class Storage():                            # Хранилище переменных
-    def __init__(self, variables: dict, functions: dict={}):         # и функций в будущем
-        self.variables: dict = variables
-        self.functions: dict = functions
-
-    def add(self, variable: Variable) -> None:
-        self.variables[variable.name] = variable
-
-    def set(self, name: str, obj: Object) -> None:
-        if self.declared(name):
-            self.get(name).obj = obj
-
-    def remove(self, name: str) -> None:
-        if self.declared:
-            del self.variables[name]
-
-    def get(self, name: str) -> Variable:
-        var = self.variables.get(name, None)
-        return var
-
-    def declared(self, name: str) -> bool:
-        if self.get(name):
-            return True
-        return False
-
-    def type(self, name: str) -> str:
-        if self.declared(name):
-            return self.get(name).type
-        return ''
-
+from basic_structures import Object, Integer, Variable, BASIC_TYPES
+from storage import Storage
 
 
 class Operation():                                                  # Класс для осуществления и менеджмента
@@ -93,33 +61,4 @@ class Operation():                                                  # Класс
             return cls.equate(lop, rop, storage)
         else:
             return cls.operate(lop, rop, op, storage)
-
-
-
-
-
-
-
-
-
-if __name__ == '__main__':
-#'Expr{a=16*3;b=a-10}'
-    s = Storage({})
-    v1 = Variable('a', Integer(0))
-    v2 = Variable('b', Integer(0))
-    s.add(v1)
-    s.add(v2)
-    i1 = Integer(16)
-    i2 = Integer(3)
-    i3 = Integer(10)
-
-    op1 = '>='
-    r1 = Operation.run(i1, i2, op1, s)
-    print(r1)
-
-    print(s.get('a'))
-    print(s.get('b'))
-
-
-
 
