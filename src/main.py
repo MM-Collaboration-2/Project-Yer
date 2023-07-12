@@ -3,6 +3,7 @@ from constructions import Expression
 from basic_structures import Variable
 from service_structures import Storage
 from construction_tree import ConstructionTree
+from utils import syntax_analysis
 
 def main():
     print(
@@ -44,12 +45,12 @@ def main():
                     if re.fullmatch('}.*', inp):
                         print(CURSOR_UP_ONE+ERASE_LINE+input_string+inp)
                     buf += inp
-                t = ConstructionTree(buf, variables)
+                t = ConstructionTree(syntax_analysis(buf), variables)
                 outp = t.run()
 
             elif re.fullmatch(variable_pattern, inp):
                 outp = variables.get(inp)  
-            else:
+            else: #можно что-то сделать с комментами или забить
                 exp = Expression(inp, variables)
                 outp = exp.run()
         print(outp)
