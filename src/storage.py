@@ -1,10 +1,25 @@
-from basic_structures import Object, Variable
+from object import Object
+from integer import Integer
+from variable import Variable
+from construction import Construction
+
 #from function import Function
 
 class Storage():                            # Хранилище переменных
-    def __init__(self, variables: dict, functions: dict={}):         # и функций в будущем
-        self.variables: dict = variables
-        self.functions: dict = functions
+    def __init__(self, variables: dict, arguments: list=[]):         # и функций в будущем
+        self.variables: dict[str, Variable] = variables
+        ####
+        self.arguments: list[Object] = arguments
+
+    ####
+    def set_arguments(self, arguments: list[Object]):
+        self.arguments = arguments
+
+    ####
+    def get_argument(self, index: int) -> Object:
+        if 0 <= index < len(self.arguments) - 1:
+            return self.arguments[index]
+        return Integer(0)
 
     def add(self, variable: Variable) -> None:
         self.variables[variable.name] = variable

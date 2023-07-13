@@ -12,6 +12,7 @@ TOKEN_TYPES: dict[str, str] = {
                              '[+\-*/=<>][=]?': 'operation',
                              '\".*?\"': 'string',
                              '\[.*\]': 'list',
+                             '\$argv\d': 'argument',
                              '\(': 'open_bracket',
                              '\)': 'close_bracket',
                              }
@@ -132,5 +133,5 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
 if __name__ == '__main__':
     # t = tokens('a = b(Expr)')
     # print(t)
-    text = 'hello   guys {{{} "{{ds\'никто не увидит, что я ...\'df" '
-    print(syntax_analysis(text, True))
+    text = 'a = $argv8 + 3'
+    print(tokens(text))

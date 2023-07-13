@@ -1,5 +1,9 @@
-from constructions import Construction, ExpressionBlock, Block, Function, CONSTRUCTIONS_HEADS
 from storage import Storage
+from construction import Construction
+from expression_block import ExpressionBlock
+from block import Block
+from function import Function
+from construction_types import CONSTRUCTIONS_HEADS
 
 
 class Builder():

@@ -1,16 +1,13 @@
 from re import search
+from construction import Construction
 from stack import Stack
 from utils import infix_to_postfix, token_type, syntax_analysis
-from basic_structures import *
+from object import Object
+from integer import Integer
+from list import List
 from operation import Operation
 from storage import Storage
 
-
-class Construction():
-    regex: str = ''
-    name: str = 'Construction'
-    def __repr__(self):
-        return 'Construction'
 
 
 class Expression(Construction):                                     # Выражение состоит из одного или нескольких базовых выражений
@@ -61,28 +58,46 @@ class Expression(Construction):                                     # Выраж
     @classmethod
     def validate_list(cls, string: str, storage: Storage) -> List:
         lst = []
-        objects = tokens(string[1:-1])
+
+        # очистка от скобочек
+        if string.startswith('['):
+            string = string[1:]
+        if string.endswith(']'):
+            string = string[:-1]
+
+        objects = tokens(string)
         for token in objects:
             tok_type = token_type(token)
             lst.append(cls.validate_operand(token, tok_type, storage))
         return List(lst)
+
+    @classmethod
+    def validate_variable(cls, token, storage: Storage):
+        if storage.declared(token):
+            variable: Variable = storage.get(token)
+
+        else:
+            variable: Variable = Variable(token, Integer(0)) # создаем новую
+            storage.add(variable);
+        
+        return variable
     
 
     @classmethod
     def validate_operand(cls, token, tok_type, storage: Storage) -> Object:
 
         if tok_type == 'variable':
-
-            if storage.declared(token):
-                variable: Variable = storage.get(token)
-
-            else:
-                variable: Variable = Variable(token, Integer(0))
-                storage.add(variable);
-            
-            return variable
+            var = cls.validate_variable(token, storage)
+            return var
 
         elif tok_type == 'function':
+
+
+
+            token: str = token[token.find('(')+1:-1]
+            argument_list = cls.validate_list(token, storage).data
+            storage.set_arguments(argument_list)
+
 
             ########
             if token.startswith('yell'):
@@ -96,21 +111,22 @@ class Expression(Construction):                                     # Выраж
 
         elif tok_type == 'list':
             lst = cls.validate_list(token, storage)
-            print(lst)
             return lst
+
+        elif tok_type == 'argument':
+            num = int(token[-1])
+            obj = storage.get_argument(num)
+            return obj
         
         else:
             obj: Object = cls.basic_object(token, tok_type)
             return obj
 
-    # Может это перенести в basic_structures?
     @classmethod
     def basic_object(cls, token: str, tok_type: str) -> Object:
         obj = BASIC_TYPES[tok_type](token)
         return obj
 
-    def get_operands_list(token):
-        pass
 
     def __repr__(self):
         return f'{self.string};'
@@ -151,7 +167,7 @@ class Block(Construction):
     regex:str = 'Block'
     def __init__(self, constructions: list[Construction], storage: Storage):
         self.storage: Storage = storage
-        self.constructions: list[Constructio] = constructions
+        self.constructions: list[Construction] = constructions
         self.name: str = 'Block'
 
     def run(self):

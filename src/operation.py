@@ -1,4 +1,7 @@
-from basic_structures import Object, Integer, Variable, BASIC_TYPES
+from object import Object
+from integer import Integer
+from variable import Variable
+from basic_types import BASIC_TYPES
 from storage import Storage
 
 

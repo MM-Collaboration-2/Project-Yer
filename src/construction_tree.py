@@ -1,9 +1,11 @@
 from re import search, compile
-from stack import Stack
-from builder import Builder
-from constructions import Construction, ExpressionBlock, CONSTRUCTIONS_TYPES
-from storage import Storage 
 from utils import syntax_analysis
+from stack import Stack
+from storage import Storage 
+from construction import Construction
+from expression_block import ExpressionBlock
+from construction_types import CONSTRUCTIONS_TYPES
+from builder import Builder
 
 
 class Node():
@@ -121,11 +123,11 @@ class ConstructionTree():
 
 if __name__ == '__main__':
     text = '''
-    'Expr{b=2}'
+    Expr{b=2}
     While(a<5){
         Expr{a=a+1;
             b=b+2;
-            yell(["aboba", b]);
+            yell(["aboba"]);
         }
     }
         '''
@@ -134,5 +136,4 @@ if __name__ == '__main__':
     t = ConstructionTree(text, s)
     #t.print()
     # print(t.reduce())
-    t.run()
-    #print(t.run())
+    print(t.run())
