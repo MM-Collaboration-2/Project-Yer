@@ -28,7 +28,6 @@ def main():
     buf = ''
     CURSOR_UP_ONE = '\x1b[1A'
     ERASE_LINE = '\x1b[2K' 
-    #variable_pattern = Variable.regex
     variables = Storage(BUILTINS, Stack())
     while True:
         input_string = '>>> '
@@ -51,8 +50,6 @@ def main():
                     buf += inp
                 t = ConstructionTree(syntax_analysis(buf, logging=True), variables)
                 outp = t.run()
-            #elif re.fullmatch(variable_pattern, inp):
-                #outp = variables.get(inp)  
             else:
                 exp = Expression(inp, variables)
                 outp = exp.run()
@@ -61,19 +58,15 @@ def main():
 
 if sys.argv[1:]: # файл указан
     try:
-        with open(sys.argv[1], "r") as f:
-            variables = Storage({})
+        with open(sys.argv[1], "r") as f:   
+            variables = Storage(BUILTINS, Stack())
             text = f.read()                                                                # мб эффективнее было бы сделать посимвольное считывание и переписать syntax_analysis сюда, но это как-то кринжовенько
             t = ConstructionTree(syntax_analysis(text, logging=True), variables)           # а мб всё-таки посимвольное считывание из файла неэффективно, типо каждый раз к файлу обращаться? не знаю, друг
             outp = t.run()
             print(outp)
     except:
+        print("Произошла ошибка")
         main()
 else:
     main()
-
-
-
-
-
 

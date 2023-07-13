@@ -1,7 +1,15 @@
-Expr{
-  a = 3;
-  a = a + 1;
+Func(myfunc){
+  Expr{
+    a = $argv0
+  }
+  If(a<1000){
+    Expr{
+      a = a + 1;
+      yell(a);
+    }
+  }
 }
 Expr{
-  a = a+1;
+  c = 1003;
+  myfunc(c);
 }
