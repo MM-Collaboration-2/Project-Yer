@@ -1,25 +1,30 @@
+from stack import Stack
 from object import Object
 from integer import Integer
 from variable import Variable
 from construction import Construction
 
-#from function import Function
 
 class Storage():                            # Хранилище переменных
-    def __init__(self, variables: dict, arguments: list=[]):         # и функций в будущем
+    def __init__(self, variables: dict, arguments_stack: Stack):         # и функций в будущем
         self.variables: dict[str, Variable] = variables
         ####
-        self.arguments: list[Object] = arguments
+        self.arguments_stack: Stack = arguments_stack
 
     ####
-    def set_arguments(self, arguments: list[Object]):
-        self.arguments = arguments
+    def add_arguments(self, arguments: list[Object]):
+        self.arguments_stack.push(arguments)
 
     ####
-    def get_argument(self, index: int) -> Object:
-        if 0 <= index < len(self.arguments) - 1:
-            return self.arguments[index]
-        return Integer(0)
+    def get_arguments(self) -> Object:
+        if self.arguments_stack.is_empty:
+            return []
+        return self.arguments_stack.peek()
+
+    ####
+    def del_arguments(self):
+        if not self.arguments_stack.is_empty():
+            self.arguments_stack.pop()
 
     def add(self, variable: Variable) -> None:
         self.variables[variable.name] = variable

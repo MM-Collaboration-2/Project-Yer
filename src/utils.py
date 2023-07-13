@@ -5,16 +5,32 @@ from stack import Stack
 # Определение регулярных выражений для паттернов типов и имен типов
 global TOKEN_TYPES
 TOKEN_TYPES: dict[str, str] = {
-                             '[a-zA-Z_][a-zA-Z0-9_]*\ *\(.*?\)': 'function',
-                             '[a-zA-Z_][a-zA-Z0-9_\#]*': 'variable',
-                             '-?\d+\.\d+': 'float',
-                             '[-]?\d+': 'integer',
-                             '[+\-*/=<>][=]?': 'operation',
-                             '\".*?\"': 'string',
-                             '\[.*\]': 'list',
-                             '\$argv\d': 'argument',
-                             '\(': 'open_bracket',
-                             '\)': 'close_bracket',
+
+        # перед переменными
+        '[a-zA-Z_][a-zA-Z0-9_]*\ *\(.*?\)': 'function',
+
+        # отрицательные числа перед операциями
+        '-\d+': 'integer',
+        '-\d+\.\d+': 'float',
+
+        # return перед переменными
+        '[+\-*/=<>][=]?|return': 'operation',
+
+        # положительные числа после операциями
+        '\d+': 'integer',
+        '\d+\.\d+': 'float',
+
+        # все буквенно-циферные комбинации
+        '[a-zA-Z_][a-zA-Z0-9_]*': 'variable',
+
+        # уникальные сами по себе
+        '\".*?\"': 'string',
+        '\[.*\]': 'list',
+        '\$argv\d': 'argument',
+
+        # скобки
+        '\(': 'open_bracket',
+        '\)': 'close_bracket',
                              }
 
 
@@ -62,6 +78,8 @@ def infix_to_postfix(infixexpr) -> list[str]:
         elif tok_type == 'variable':                # если переменная
             postfix_list.append(token)
         elif tok_type == 'list':                    # если список
+            postfix_list.append(token)
+        elif tok_type == 'function':                # если функция
             postfix_list.append(token)
         elif tok_type == 'open_bracket':
             op_stack.push( token)
@@ -131,7 +149,6 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
 
 
 if __name__ == '__main__':
-    # t = tokens('a = b(Expr)')
-    # print(t)
-    text = 'a = $argv8 + 3'
-    print(tokens(text))
+    text = 'c = fn(); return c'
+    for t in tokens(text):
+        print(token_type(t), t)

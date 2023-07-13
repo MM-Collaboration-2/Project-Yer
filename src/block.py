@@ -1,15 +1,13 @@
 from object import Object
 from integer import Integer
 from construction import Construction
-from storage import Storage
 
 
 class Block(Construction):
     regex:str = 'Block'
-    def __init__(self, constructions: list[Construction], storage: Storage):
-        self.storage: Storage = storage
+    name: str = 'Block'
+    def __init__(self, constructions: list[Construction]):
         self.constructions: list[Construction] = constructions
-        self.name: str = 'Block'
 
     def run(self):
         result: Object = Integer(0)

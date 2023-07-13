@@ -73,8 +73,12 @@ class ConstructionTree():
 
             # если найденная конструкция -- выражение
             # добавляем ноду с выражением. В глубину не парсим
-            if new_header.startswith('Expr') or new_header.startswith('Func'):
+            if new_header.startswith('Expr'):
                 new_node = Node(text[m.start():end_body+1], [])
+
+            # если функция
+            elif new_header.startswith('Func'):
+                new_node = self.parse(text[start_body+1:end_body], new_header)
 
             # если любая другая конструкция
             # парсим ее в глубину
@@ -122,18 +126,28 @@ class ConstructionTree():
 
 
 if __name__ == '__main__':
+    from callable import Function
+    from expression_block import ExpressionBlock
+    from block import Block
+    s = Storage({}, Stack())
     text = '''
-    Expr{b=2}
-    While(a<5){
-        Expr{a=a+1;
-            b=b+2;
-            yell(["aboba"]);
-        }
+    Func(fn){
+        Expr{e=19}
+        Expr{return 10;}
     }
-        '''
+    Expr{b = fn;c = b(); yell(c)}
+    '''
     text = syntax_analysis(text)
-    s = Storage({})
+    s = Storage({}, Stack())
     t = ConstructionTree(text, s)
+    b = t.reduce()
+
+    t.run()
+    #print(t.run())
     #t.print()
-    # print(t.reduce())
-    print(t.run())
+
+    #print('---')
+    #e = ExpressionBlock('e=19;return e', s)
+    #b = Block([e])
+    #print(b)
+    

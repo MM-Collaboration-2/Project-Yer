@@ -8,6 +8,7 @@ from basic_types import BASIC_TYPES
 from storage import Storage
 from operation import Operation
 from construction import Construction
+from callable import Function, BuiltIn
 
 
 class Expression(Construction):                                     # Выражение состоит из одного или нескольких базовых выражений
@@ -16,6 +17,9 @@ class Expression(Construction):                                     # Выраж
         self.storage: Storage = storage
         self.string: str = string
         self.postfix: list[str] = infix_to_postfix(self.clear())
+        self.return_flag: bool = False
+        #self.arguments = self.storage.get_arguments()
+
 
     def clear(self):
         if self.string.startswith('Expr{'):
@@ -29,6 +33,12 @@ class Expression(Construction):                                     # Выраж
             tok_type = token_type(token)
 
             if tok_type == 'operation':                             # если переменная если оператор -- создаем базовую операцию
+
+
+                if token == 'return':
+                    self.return_flag = True
+                    continue
+
                 rop = stack.pop()
                 lop = stack.pop()
                 op = token
@@ -53,26 +63,43 @@ class Expression(Construction):                                     # Выраж
                 
                 stack.push(obj)                                     # помещаем в стек
 
+        if self.return_flag:
+            # чисим аргументы после выполнения функции
+            # удаление списка аргументов из стека аргументов хранилища
+            self.storage.del_arguments()
+
         return result                                               # для использования в условиях и циклах
 
     @classmethod
-    def validate_list(cls, string: str, storage: Storage) -> List:
+    def validate_operation(cls, token: str):
+        # обраблтка return и += -= ...
+        pass
+
+
+    @classmethod
+    def validate_basic_object(cls, token: str, tok_type: str) -> Object:
+        obj = BASIC_TYPES[tok_type](token)
+        return obj
+
+
+    @classmethod
+    def validate_list(cls, token: str, storage: Storage) -> List:
         lst = []
 
         # очистка от скобочек
-        if string.startswith('['):
-            string = string[1:]
-        if string.endswith(']'):
-            string = string[:-1]
+        if token.startswith('['):
+            token = token[1:]
+        if token.endswith(']'):
+            token = token[:-1]
 
-        objects = tokens(string)
+        objects = tokens(token)
         for token in objects:
             tok_type = token_type(token)
             lst.append(cls.validate_operand(token, tok_type, storage))
         return List(lst)
 
     @classmethod
-    def validate_variable(cls, token, storage: Storage):
+    def validate_variable(cls, token: str, storage: Storage):
         if storage.declared(token):
             variable: Variable = storage.get(token)
 
@@ -81,23 +108,63 @@ class Expression(Construction):                                     # Выраж
             storage.add(variable);
         
         return variable
+
+    @classmethod
+    def validate_argument(cls, token: str, storage: Storage):
+
+        # получаем номер аргумента в списке аргументов
+        num = int(token.replace('$argv', ''))
+        arguments = storage.get_arguments()
+        if 0 <= num < len(arguments):
+            return arguments[num]
+        return Integer(0)
+
+    @classmethod
+    def validate_function(cls, token: str, storage: Storage):
+
+        # получаем строку с аргументами
+        arguments_str: str = token[token.find('(')+1:-1]
+
+        # получаем список с аргументами
+        argument_list = cls.validate_list(arguments_str, storage).data 
+
+        # имя функции
+        function_name: str = token[:token.find('(')]  
+
+        # функция хранится как объект, помещенный в переменную
+        var: Variable = cls.validate_variable(function_name, storage)
+
+        # извлекаем функцию function:
+        function: Object = var.obj
+
+        ########## function correct
+
+        if function.specification == 'userdefined':
+
+            # одобавляем список параметров в хранилице аргументов
+            storage.add_arguments(argument_list) 
+
+            obj: Object = function.run()
+
+        elif function.specification == 'builtin':
+
+            # builtin функции не изменяют стек списков парамеров
+            # так как из выполнение не предусмтаривает 
+            # использование оператора return
+            obj: Object = function.run(argument_list)
+
+        return obj
+
     
 
     @classmethod
-    def validate_operand(cls, token, tok_type, storage: Storage) -> Object:
+    def validate_operand(cls, token: str, tok_type: str, storage: Storage) -> Object:
 
         if tok_type == 'variable':
             var = cls.validate_variable(token, storage)
             return var
 
         elif tok_type == 'function':
-
-
-
-            token: str = token[token.find('(')+1:-1]
-            argument_list = cls.validate_list(token, storage).data
-            storage.set_arguments(argument_list)
-
 
             ########
             if token.startswith('yell'):
@@ -106,28 +173,27 @@ class Expression(Construction):                                     # Выраж
                 for obj in lst.data:
                     print(obj)
                 return Integer(len(lst.data))
-            return Integer(0)
             #######
+
+
+            obj: Object = cls.validate_function(token, storage)
+            return obj
+
 
         elif tok_type == 'list':
             lst = cls.validate_list(token, storage)
             return lst
 
         elif tok_type == 'argument':
-            num = int(token[-1])
-            obj = storage.get_argument(num)
-            return obj
+            return cls.validate_argument(token, storage)
         
         else:
-            obj: Object = cls.basic_object(token, tok_type)
-            return obj
-
-    @classmethod
-    def basic_object(cls, token: str, tok_type: str) -> Object:
-        obj = BASIC_TYPES[tok_type](token)
-        return obj
+            return cls.validate_basic_object(token, tok_type) 
 
 
     def __repr__(self):
         return f'{self.string};'
+
+if __name__ == '__main__':
+    pass
 

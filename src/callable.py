@@ -1,35 +1,40 @@
-from basic_structures import Object
-from storage import Storage
-from constructions import Block
-from construction_tree import ConstructionTree
+from object import Object
+from integer import Integer
+from block import Block
 
 
-class Callable(Object):
+class Function(Object):
     regex: str = ''
     type: str = 'function'
+    specification: str = 'userdefined'
 
-    def __init__(self, head: str, text: str):
-        self.name = head
-        self.text = text
+    def __init__(self, block: Block):
+        self.block = block
 
-    def run(self, params: list[str], storage: Storage):
-        block = self.get_block(params, storage)
-        return block.run()
+    def run(self) -> Object:
+        obj: Object = self.block.run()
+        return obj
         
-    def get_block(self, params: list[str], storage: Storage) -> Block:
-        t = ConstructionTree(self.substitute(params), storage)
-        block = t.reduce()
-        return block
-
-    def substitute(self, params: list[str]) -> str:
-        text = self.text
-        for num, param in enumerate(params):
-            arg_name = 'argv#' + str(num)
-            text = text.replace(arg_name, param)
-        return text
+    def get_block(self) -> Block:
+        return self.block
 
     def __repr__(self):
-        return 'cl#' + self.name
+        return 'fn#'
+
+class BuiltIn(Object):
+    regex: str = ''
+    type: str = 'function'
+    specification: str = 'builtin'
+
+    def __init__(self, function: callable):
+        self.function: callable = function
+
+    def run(self, arguments: list[Object]) -> Object:
+        obj: Object = self.function(arguments)
+        return obj
+        
+    def __repr__(self):
+        return 'builtin#'
 
 
 
@@ -38,17 +43,8 @@ if __name__ == '__main__':
     text = '''
 Func(foo){
     Expr{b="b"}
-    While(argv#0<3){
-        Expr{argv#0=argv#0+2;
-            b=b+"y";
-            b
-        }
-    }
+    Expr{return b}
 }
+Expr{foo()}
 '''
-
-    f = Function(text)
-    l = ['c', 'd', 'e']
-    s = Storage({})
-    #print(f.get_block(l, s))
-    print(f.run(l, s))
+       

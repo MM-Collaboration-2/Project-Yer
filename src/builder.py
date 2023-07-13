@@ -2,8 +2,10 @@ from storage import Storage
 from construction import Construction
 from expression_block import ExpressionBlock
 from block import Block
-from function import Function
+from function_block import FunctionBlock
 from construction_types import CONSTRUCTIONS_HEADS
+from callable import Function
+from variable import Variable
 
 
 class Builder():
@@ -23,13 +25,24 @@ class Builder():
             return ExpressionBlock(header, storage)
 
         if obj.name == 'Func':
-            func: Function = Function(header)
-            block = Block([], storage)
-            return block
+            func_block: FunctionBlock = FunctionBlock(header)
+
+            # блок для функции
+            block = Block(constructions)
+            function: Function = Function(block)
+
+            func_name = func_block.head
+
+            # создаем переменную с объектом функции
+            var: Variable = Variable(func_block.head, function)
+
+            # добавляем в хранилище
+            storage.add(var)
+            return Block([])
 
         elif obj.name == 'Main' or obj.name == 'Block':
-            return obj(constructions, storage)
+            return obj(constructions)
 
         else:
-            block = Block(constructions, storage)
+            block = Block(constructions)
             return obj(header, block, storage)

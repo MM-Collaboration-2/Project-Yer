@@ -1,6 +1,6 @@
 class Stack():                          # Стек для дерева выражений
     def __init__(self):                 # костыль, надстройка над list'ом
-        self.list = list()
+        self.list = []
 
     def is_empty(self):
         return len(self.list) == 0
@@ -13,6 +13,9 @@ class Stack():                          # Стек для дерева выра�
 
     def push(self, data):
         self.list.append(data)
+
+    def clear(self):
+        self.list = []
 
     def __repr__(self):
         return str(self.list)
