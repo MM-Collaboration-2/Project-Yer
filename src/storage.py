@@ -17,7 +17,7 @@ class Storage():                            # Хранилище перемен�
 
     ####
     def get_arguments(self) -> Object:
-        if self.arguments_stack.is_empty:
+        if self.arguments_stack.is_empty():
             return []
         return self.arguments_stack.peek()
 

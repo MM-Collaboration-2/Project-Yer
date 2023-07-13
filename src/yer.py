@@ -2,6 +2,8 @@
 import re
 import sys
 from utils import syntax_analysis
+from stack import Stack
+from yer_builtins import BUILTINS
 from variable import Variable
 from storage import Storage
 from expression import Expression
@@ -27,7 +29,7 @@ def main():
     CURSOR_UP_ONE = '\x1b[1A'
     ERASE_LINE = '\x1b[2K' 
     #variable_pattern = Variable.regex
-    variables = Storage({})
+    variables = Storage(BUILTINS, Stack())
     while True:
         input_string = '>>> '
         inp = input(input_string)

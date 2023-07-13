@@ -6,6 +6,7 @@ from construction import Construction
 from expression_block import ExpressionBlock
 from construction_types import CONSTRUCTIONS_TYPES
 from builder import Builder
+from yer_builtins import BUILTINS
 
 
 class Node():
@@ -131,18 +132,23 @@ if __name__ == '__main__':
     from block import Block
     s = Storage({}, Stack())
     text = '''
-    Func(fn){
-        Expr{e=19}
-        Expr{return 10;}
+    Func(add){
+        Expr{return $argv0+$argv1;}
     }
-    Expr{b = fn;c = b(); yell(c)}
+    Expr{
+        l = [1, 2, 3];
+        b = 1;
+        v = get(l, b);
+        yell(v)
+    }
     '''
     text = syntax_analysis(text)
-    s = Storage({}, Stack())
+    s = Storage(BUILTINS, Stack())
     t = ConstructionTree(text, s)
     b = t.reduce()
 
     t.run()
+    #print(s.variables)
     #print(t.run())
     #t.print()
 

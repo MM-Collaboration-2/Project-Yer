@@ -26,7 +26,7 @@ TOKEN_TYPES: dict[str, str] = {
         # уникальные сами по себе
         '\".*?\"': 'string',
         '\[.*\]': 'list',
-        '\$argv\d': 'argument',
+        '\$argv\d+': 'argument',
 
         # скобки
         '\(': 'open_bracket',
@@ -41,6 +41,9 @@ def tokens(infixexpr: str):
     
     return findall(pattern, infixexpr)
 
+
+def recover_tokens(token_list: list[str]):
+    pass
 
 # Определяем тип токена
 def token_type(token: str) -> str:
@@ -80,6 +83,8 @@ def infix_to_postfix(infixexpr) -> list[str]:
         elif tok_type == 'list':                    # если список
             postfix_list.append(token)
         elif tok_type == 'function':                # если функция
+            postfix_list.append(token)
+        elif tok_type == 'argument':                # если аргумент
             postfix_list.append(token)
         elif tok_type == 'open_bracket':
             op_stack.push( token)
@@ -149,6 +154,6 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
 
 
 if __name__ == '__main__':
-    text = 'c = fn(); return c'
+    text = 'c = yell(fn())'
     for t in tokens(text):
         print(token_type(t), t)

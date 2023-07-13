@@ -18,7 +18,6 @@ class Expression(Construction):                                     # Выраж
         self.string: str = string
         self.postfix: list[str] = infix_to_postfix(self.clear())
         self.return_flag: bool = False
-        #self.arguments = self.storage.get_arguments()
 
 
     def clear(self):
@@ -84,14 +83,10 @@ class Expression(Construction):                                     # Выраж
 
     @classmethod
     def validate_list(cls, token: str, storage: Storage) -> List:
-        lst = []
-
         # очистка от скобочек
-        if token.startswith('['):
-            token = token[1:]
-        if token.endswith(']'):
-            token = token[:-1]
+        token = token[1:-1]
 
+        lst: list[Object] = []
         objects = tokens(token)
         for token in objects:
             tok_type = token_type(token)
@@ -124,9 +119,26 @@ class Expression(Construction):                                     # Выраж
 
         # получаем строку с аргументами
         arguments_str: str = token[token.find('(')+1:-1]
+        arguments_str = '[' + arguments_str + ']'
 
         # получаем список с аргументами
+
+
+        # восстановить 
         argument_list = cls.validate_list(arguments_str, storage).data 
+
+
+        # удалить
+        ############
+        #argument_list: list[Object] = []
+#
+        #objects = tokens(arguments_str)
+        #print(objects)
+        #for token in objects:
+            #tok_type = token_type(token)
+            #print(token, tok_type)
+            #argument_list .append(cls.validate_operand(token, tok_type, storage))
+        ##########
 
         # имя функции
         function_name: str = token[:token.find('(')]  
@@ -151,6 +163,7 @@ class Expression(Construction):                                     # Выраж
             # builtin функции не изменяют стек списков парамеров
             # так как из выполнение не предусмтаривает 
             # использование оператора return
+            #argument_list = [arg.obj if arg.type == 'variable' else arg for arg in arument_list]
             obj: Object = function.run(argument_list)
 
         return obj
@@ -161,34 +174,25 @@ class Expression(Construction):                                     # Выраж
     def validate_operand(cls, token: str, tok_type: str, storage: Storage) -> Object:
 
         if tok_type == 'variable':
-            var = cls.validate_variable(token, storage)
+            var: Variable = cls.validate_variable(token, storage)
             return var
 
         elif tok_type == 'function':
-
-            ########
-            if token.startswith('yell'):
-                lst = token[:-1].replace('yell(', '')
-                lst = cls.validate_list(lst, storage)
-                for obj in lst.data:
-                    print(obj)
-                return Integer(len(lst.data))
-            #######
-
-
             obj: Object = cls.validate_function(token, storage)
             return obj
 
 
         elif tok_type == 'list':
-            lst = cls.validate_list(token, storage)
+            lst: List = cls.validate_list(token, storage)
             return lst
 
         elif tok_type == 'argument':
-            return cls.validate_argument(token, storage)
+            obj: Object = cls.validate_argument(token, storage)
+            return obj
         
         else:
-            return cls.validate_basic_object(token, tok_type) 
+            obj: Object = cls.validate_basic_object(token, tok_type) 
+            return obj
 
 
     def __repr__(self):
