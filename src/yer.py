@@ -1,4 +1,6 @@
+#!/usr/bin/env python3
 import re
+import sys
 from utils import syntax_analysis
 from variable import Variable
 from storage import Storage
@@ -54,4 +56,22 @@ def main():
                 outp = exp.run()
         print(outp)
 
-main()
+
+if sys.argv[1:]: # файл указан
+    try:
+        with open(sys.argv[1], "r") as f:
+            variables = Storage({})
+            text = f.read()                                                                # мб эффективнее было бы сделать посимвольное считывание и переписать syntax_analysis сюда, но это как-то кринжовенько
+            t = ConstructionTree(syntax_analysis(text, logging=True), variables)           # а мб всё-таки посимвольное считывание из файла неэффективно, типо каждый раз к файлу обращаться? не знаю, друг
+            outp = t.run()
+            print(outp)
+    except:
+        main()
+else:
+    main()
+
+
+
+
+
+
