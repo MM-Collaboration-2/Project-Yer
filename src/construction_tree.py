@@ -141,15 +141,15 @@ class ConstructionTree():
 
 if __name__ == '__main__':
     text = '''
-    Func(add){
-        Expr{return $argv0+$argv1;}
+    Func(myfunc){
+    a = $argv0;
+        While(a<1000){
+            a = a + 1;
+            yell(a);
+        }
     }
-    Expr{
-        l = [1, 2, 3];
-        b = 1;
-        v = get(l, b);
-        yell(v)
-    }
+    c = 103;
+    myfunc(c);
     '''
     
     text1 = '''
@@ -168,10 +168,11 @@ if __name__ == '__main__':
     r = fib(6);
     yell(r);
     '''
-    text = syntax_analysis(text1)
+    text = syntax_analysis(text)
     s = Storage(BUILTINS, Stack())
     t = ConstructionTree(text, s)
     b = t.reduce()
 
-    t.run()
+    r = t.run()
+    print(r)
     

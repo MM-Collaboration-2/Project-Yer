@@ -1,15 +1,8 @@
-Func(myfunc){
-  Expr{
-    a = $argv0
-  }
-  If(a<1000){
-    Expr{
-      a = a + 1;
-      yell(a);
-    }
-  }
+a = 5
+Func(fn){
+	If($argv0>5){
+		return a;
+	}
 }
-Expr{
-  c = 1003;
-  myfunc(c);
-}
+b = fn(100);
+yell("result", b)

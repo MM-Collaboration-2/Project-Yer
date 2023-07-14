@@ -51,7 +51,7 @@ def main():
                 t = ConstructionTree(syntax_analysis(buf, logging=True), variables)
                 outp = t.run()
             else:
-                exp = Expression(inp, variables)
+                exp = Expression(inp, variables, True)
                 outp = exp.run()
         print(outp)
 

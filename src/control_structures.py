@@ -1,4 +1,5 @@
 from object import Object
+from void import Void
 from integer import Integer
 from storage import Storage
 from construction import Construction
@@ -16,7 +17,7 @@ class If(Construction):
         self.block = block
 
     def get_check_expression(self) -> Expression:
-        return Expression(self.clear(), self.storage)
+        return Expression(self.clear(), self.storage, True)
 
     def clear(self):
         if self.header.startswith('If('):
@@ -24,7 +25,7 @@ class If(Construction):
         return self.header
 
     def run(self) -> Object:
-        result = Integer(0)
+        result: Objcet = Void()
         if self.check_expression.run().data:
             result = self.block.run()
         return result
@@ -45,7 +46,7 @@ class While(Construction):
         self.block = block
 
     def run(self) -> Object:
-        result: Object = Integer(0)
+        result: Object = Void()
         while True:
             flag = self.check_expression.run().data         # to get real int, not object
             if flag:
@@ -55,7 +56,7 @@ class While(Construction):
         return result
         
     def get_check_expression(self) -> Expression:
-        return Expression(self.clear(), self.storage)
+        return Expression(self.clear(), self.storage, True)
 
     def clear(self):
         if self.header.startswith('While('):
@@ -78,7 +79,7 @@ class For(Construction):
 
     def run(self) -> Object:
         self.init_expression.run()
-        result: Object = Integer(0)
+        result: Object = Void()
         while True:
             flag = self.check_expression.run().data         # to get real int, not object
             if flag:
@@ -90,7 +91,7 @@ class For(Construction):
                 
     def init_expressions(self):
         expressions = [s for s in self.clear().split(';') if s]
-        expressions = [Expression(e, self.storage) for e in expressions]
+        expressions = [Expression(e, self.storage, True) for e in expressions]
         self.init_expression = expressions[0]
         self.check_expression = expressions[1]
         self.increment_expression = expressions[2]

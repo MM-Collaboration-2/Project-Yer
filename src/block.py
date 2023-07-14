@@ -1,4 +1,5 @@
 from object import Object
+from void import Void
 from integer import Integer
 from construction import Construction
 
@@ -10,7 +11,7 @@ class Block(Construction):
         self.constructions: list[Construction] = constructions
 
     def run(self):
-        result: Object = Integer(0)
+        result: Object = Void()
         for construction in self.constructions:
             result = construction.run()
         return result

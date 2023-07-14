@@ -1,6 +1,7 @@
 from utils import tokens, token_type, infix_to_postfix
 from stack import Stack
 from object import Object
+from void import Void
 from integer import Integer
 from list import List
 from variable import Variable
@@ -13,11 +14,11 @@ from callable import Function, BuiltIn
 
 class Expression(Construction):                                     # Выражение состоит из одного или нескольких базовых выражений
     name: str = 'Exprssion'
-    def __init__(self, string: str, storage: Storage):
+    def __init__(self, string: str, storage: Storage, return_flag: bool=False):
         self.storage: Storage = storage
         self.string: str = string
         self.postfix: list[str] = infix_to_postfix(self.clear())
-        self.return_flag: bool = False
+        self.return_flag: bool = return_flag
 
 
     def clear(self):
@@ -32,7 +33,6 @@ class Expression(Construction):                                     # Выраж
             tok_type = token_type(token)
 
             if tok_type == 'operation':                             # если переменная если оператор -- создаем базовую операцию
-
 
                 if token == 'return':
                     self.return_flag = True
@@ -57,21 +57,23 @@ class Expression(Construction):                                     # Выраж
 
 
                 obj = self.validate_operand(token, tok_type, self.storage)  # чтобы возвращать последний добавленный операндб в случае если
-                                                                            # экспрешн состоит из одного операнда
                 result = obj
-                
                 stack.push(obj)                                     # помещаем в стек
 
         if self.return_flag:
             # чисим аргументы после выполнения функции
             # удаление списка аргументов из стека аргументов хранилища
             self.storage.del_arguments()
+            # возвращаем результат
+            return result                                               # для использования в условиях и циклах
 
-        return result                                               # для использования в условиях и циклах
+        # возвращаем пустоту
+        return Void()
+
 
     @classmethod
     def validate_operation(cls, token: str):
-        # обраблтка return и += -= ...
+        # обработка return и += -= ...
         pass
 
 
@@ -165,6 +167,9 @@ class Expression(Construction):                                     # Выраж
             # использование оператора return
             #argument_list = [arg.obj if arg.type == 'variable' else arg for arg in arument_list]
             obj: Object = function.run(argument_list)
+
+        if obj.type == 'void':
+            obj = Integer(0)
 
         return obj
 
