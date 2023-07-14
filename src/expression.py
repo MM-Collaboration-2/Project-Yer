@@ -108,7 +108,6 @@ class Expression(Construction):                                     # Выраж
             if obj.type == 'void':
                 continue
             lst.append(obj)
-        
         return List(lst)
 
     @classmethod
@@ -142,7 +141,11 @@ class Expression(Construction):                                     # Выраж
 
         # получаем список с аргументами
         argument_list = cls.validate_list(arguments_str, storage).data 
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> f5bed0779b6b90601ec514f2613b3d0876749e2e
         # имя функции
         function_name: str = token[:token.find('(')]  
 
