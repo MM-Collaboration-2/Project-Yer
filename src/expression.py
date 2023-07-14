@@ -27,7 +27,10 @@ class Expression(Construction):                                     # Выраж
         return self.string
         
     def run(self):                                                  # создаем конвейер из элементарных выражений
-        result: Object = Integer(0)
+        #result: Object = Integer(0)
+        #######
+        result: Object = Void()
+        #######
         stack: Stack = Stack()
         for token in self.postfix:
             tok_type = token_type(token)
@@ -92,17 +95,12 @@ class Expression(Construction):                                     # Выраж
 
         exprs: list[Expression] = token.split(',')
 
-
-        for token in exprs:
-
-
-            expr = Expression(token, storage, True)
+        for expr in exprs:
+            expr = Expression(expr, storage, True)
             obj = expr.run()
             if obj.type == 'void':
-                print('Panic!!! void here')
-
+                continue
             lst.append(obj)
-
 
         return List(lst)
 
@@ -140,19 +138,6 @@ class Expression(Construction):                                     # Выраж
         # восстановить 
         argument_list = cls.validate_list(arguments_str, storage).data 
 
-
-        # удалить
-        ############
-        #argument_list: list[Object] = []
-#
-        #objects = tokens(arguments_str)
-        #print(objects)
-        #for token in objects:
-            #tok_type = token_type(token)
-            #print(token, tok_type)
-            #argument_list .append(cls.validate_operand(token, tok_type, storage))
-        ##########
-
         # имя функции
         function_name: str = token[:token.find('(')]  
 
@@ -162,25 +147,22 @@ class Expression(Construction):                                     # Выраж
         # извлекаем функцию function:
         function: Object = var.obj
 
-        ########## function correct
+        if function.type == 'function':
+            if function.specification == 'userdefined':
 
-        if function.specification == 'userdefined':
+                # одобавляем список параметров в хранилице аргументов
+                storage.add_arguments(argument_list) 
+                obj: Object = function.run()
 
-            # одобавляем список параметров в хранилице аргументов
-            storage.add_arguments(argument_list) 
+            elif function.specification == 'builtin':
 
-            obj: Object = function.run()
+                # builtin функции не изменяют стек списков парамеров
+                # так как из выполнение не предусмтаривает 
+                # использование оператора return
+                obj: Object = function.run(argument_list)
 
-        elif function.specification == 'builtin':
-
-            # builtin функции не изменяют стек списков парамеров
-            # так как из выполнение не предусмтаривает 
-            # использование оператора return
-            #argument_list = [arg.obj if arg.type == 'variable' else arg for arg in arument_list]
-            obj: Object = function.run(argument_list)
-
-        if obj.type == 'void':
-            obj = Integer(0)
+        else:
+            obj: Object = Integer(0)
 
         return obj
 

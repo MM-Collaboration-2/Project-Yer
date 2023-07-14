@@ -46,6 +46,9 @@ class Operation():                                                  # Класс
         if cls.__same_types(lop, rop):
             if lop.type in ['list', 'string'] and op in ['-', '*', '/']:
                 return False
+            if rop.type in ['integer', 'float']:
+                if rop.data == 0:
+                    return False
             return True
         return False
 
