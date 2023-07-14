@@ -1,2 +1,13 @@
-l = ["a"] + ["b"];
-yell(l)
+Func(foo){
+	If($argv0>5){
+		return $argv1;
+	}
+}
+Func(add){
+	a = $argv0;
+	b = $argv1;
+	return a+b;
+}
+
+r = foo(6+2, 4);
+yell(r);

@@ -53,7 +53,8 @@ def main():
             else:
                 exp = Expression(inp, variables, True)
                 outp = exp.run()
-        print(outp)
+        if outp.type != 'void':
+            print(outp)
 
 
 if sys.argv[1:]: # файл указан

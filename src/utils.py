@@ -154,6 +154,6 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
 
 
 if __name__ == '__main__':
-    text = 'l = ["a"] + ["b"]'
+    text = '[1+2]'
     for t in tokens(text):
         print(token_type(t), t)

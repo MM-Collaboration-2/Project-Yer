@@ -53,3 +53,8 @@ BUILTINS: dict[str, Variable] = {
     'len': Variable('len', BuiltIn(len_func)),
     'get': Variable('get', BuiltIn(get_func)),
 }
+
+if __name__ == '__main__':
+    from list import List
+    lst: list[Object] = [Integer(1), Integer(2), Integer(3)] 
+    print(len_func([List(lst)]))
