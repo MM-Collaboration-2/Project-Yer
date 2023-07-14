@@ -1,21 +1,15 @@
-Func(fib){
-Expr{
-    a = 0;
-    b = 1;
-    c = 0;
-}
-For(i=0;i<$argv0;i=i+1){
-	Expr{
-	c = a + b;
-	a = b;
-	b = c;
+Func(myfunc){
+  Expr{
+    a = $argv0
+  }
+  If(a<1000){
+    Expr{
+      a = a + 1;
+      yell(a);
     }
+  }
 }
 Expr{
-    return c;
-}
-}
-Expr{
-r = "aa" - "b";
-yell(r);
+  c = 1003;
+  myfunc(c);
 }

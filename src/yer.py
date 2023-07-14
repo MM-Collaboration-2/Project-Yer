@@ -28,7 +28,6 @@ def main():
     buf = ''
     CURSOR_UP_ONE = '\x1b[1A'
     ERASE_LINE = '\x1b[2K' 
-    #variable_pattern = Variable.regex
     variables = Storage(BUILTINS, Stack())
     while True:
         input_string = '>>> '
@@ -51,8 +50,6 @@ def main():
                     buf += inp
                 t = ConstructionTree(syntax_analysis(buf, logging=True), variables)
                 outp = t.run()
-            #elif re.fullmatch(variable_pattern, inp):
-                #outp = variables.get(inp)  
             else:
                 exp = Expression(inp, variables)
                 outp = exp.run()
