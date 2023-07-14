@@ -8,6 +8,8 @@ TOKEN_TYPES: dict[str, str] = {
 
         # перед переменными
         '[a-zA-Z_][a-zA-Z0-9_]*\ *\(.*?\)': 'function',
+        #'[a-zA-Z_][a-zA-Z0-9_]*\ *\(': 'function',
+
 
         # отрицательные числа перед операциями
         '-\d+': 'integer',
@@ -23,27 +25,56 @@ TOKEN_TYPES: dict[str, str] = {
         # все буквенно-циферные комбинации
         '[a-zA-Z_][a-zA-Z0-9_]*': 'variable',
 
-        # уникальные сами по себе
-        '\".*?\"': 'string',
-        '\[.*?\]': 'list',
-        '\$argv\d+': 'argument',
-
         # скобки
         '\(': 'open_bracket',
         '\)': 'close_bracket',
-                             }
+        '\[': 'list',
+        '\]': 'square_close_bracket',
+
+        # уникальные сами по себе
+        '\".*?\"': 'string',
+
+        # список после скобок
+        '\[.*?\]': 'list',
+        '\$argv\d+': 'argument',
+        ',': 'comma',
+
+        }
+
+
+'''a = b() * [[1+3], "str"]'''
+def get_arguments(expression: str):
+    pattern = '|'.join(t for t in TOKEN_TYPES.keys())
+    args = findall(pattern, expression)
+    new_args = []
+    index: int = 0
+    while index < len(args):
+        token = args[index]
+        if token == '[':
+            brackets: int = 1
+            while brackets != 0:
+                index += 1
+                new_token = args[index]
+                token += new_token
+                if new_token == '[':
+                    brackets += 1
+                elif new_token == ']':
+                    brackets -= 1
+
+        index += 1
+        new_args.append(token)
+
+    print(new_args)
+    return new_args
+
+                
 
 
 # Получаем список токенов из строки выражения в инфиксном виде
 def tokens(infixexpr: str):
-    d = {}    
     pattern = '|'.join(t for t in TOKEN_TYPES.keys())
-    
     return findall(pattern, infixexpr)
 
-
-def recover_tokens(token_list: list[str]):
-    pass
 
 # Определяем тип токена
 def token_type(token: str) -> str:
@@ -154,6 +185,6 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
 
 
 if __name__ == '__main__':
-    text = '[1+2]'
-    for t in tokens(text):
+    text = 'a = b() * [[1+3], "str"]'
+    for t in get_arguments(text):
         print(token_type(t), t)
