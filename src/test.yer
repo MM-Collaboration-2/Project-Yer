@@ -1,8 +1,2 @@
-a = 5
-Func(fn){
-	If($argv0>5){
-		return a;
-	}
-}
-b = fn(100);
-yell("result", b)
+l = ["a"] + ["b"];
+yell(l)

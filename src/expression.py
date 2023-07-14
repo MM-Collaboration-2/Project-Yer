@@ -89,10 +89,21 @@ class Expression(Construction):                                     # Выраж
         token = token[1:-1]
 
         lst: list[Object] = []
-        objects = tokens(token)
-        for token in objects:
-            tok_type = token_type(token)
-            lst.append(cls.validate_operand(token, tok_type, storage))
+
+        exprs: list[Expression] = token.split(',')
+
+
+        for token in exprs:
+
+
+            expr = Expression(token, storage, True)
+            obj = expr.run()
+            if obj.type == 'void':
+                print('Panic!!! void here')
+
+            lst.append(obj)
+
+
         return List(lst)
 
     @classmethod

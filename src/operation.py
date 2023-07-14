@@ -35,10 +35,19 @@ class Operation():                                                  # Класс
         return operand
 
     @classmethod
-    def __same_types(cls, lop: Object, rop: Object, storage: Storage) -> bool:
+    def __same_types(cls, lop: Object, rop: Object) -> bool:
+        # осторожно, один из них может быть переменной
+        return lop.type == rop.type
+
+    @classmethod
+    def __valid_operation(cls, lop: Object, rop: Object, op: str, storage: Storage) -> bool:
         lop = cls.__get_object(lop, storage)
         rop = cls.__get_object(rop, storage)
-        return lop.type == rop.type
+        if cls.__same_types(lop, rop):
+            if lop.type in ['list', 'string'] and op in ['-', '*', '/']:
+                return False
+            return True
+        return False
 
 
     # В приравнивании левый операнд всегда переменная
@@ -52,7 +61,7 @@ class Operation():                                                  # Класс
     def operate(cls, lop: Object, rop: Object, op: str, storage: Storage) -> Object:
         lop = cls.__get_object(lop, storage)
         rop = cls.__get_object(rop, storage)
-        if cls.__same_types(lop, rop, storage):
+        if cls.__valid_operation(lop, rop, op, storage):
             basic_type = BASIC_TYPES[lop.type]
             func = cls.operations[op]
             return basic_type(func(lop.data, rop.data))

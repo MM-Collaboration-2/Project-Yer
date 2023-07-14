@@ -25,7 +25,7 @@ TOKEN_TYPES: dict[str, str] = {
 
         # уникальные сами по себе
         '\".*?\"': 'string',
-        '\[.*\]': 'list',
+        '\[.*?\]': 'list',
         '\$argv\d+': 'argument',
 
         # скобки
@@ -154,6 +154,6 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
 
 
 if __name__ == '__main__':
-    text = 'c = yell(fn())'
+    text = 'l = ["a"] + ["b"]'
     for t in tokens(text):
         print(token_type(t), t)
