@@ -60,20 +60,11 @@ def main():
 
 
 if sys.argv[1:]: # файл указан
-    try:
-        with open(sys.argv[1], "r") as f:
-            variables = Storage({})
-            text = f.read()                                                                # мб эффективнее было бы сделать посимвольное считывание и переписать syntax_analysis сюда, но это как-то кринжовенько
-            t = ConstructionTree(syntax_analysis(text, logging=True), variables)           # а мб всё-таки посимвольное считывание из файла неэффективно, типо каждый раз к файлу обращаться? не знаю, друг
-            outp = t.run()
-            print(outp)
-    except:
-        main()
+    with open(sys.argv[1], "r") as f:
+        variables = Storage(BUILTINS, Stack())
+        text = f.read()
+        text = syntax_analysis(text)
+        t = ConstructionTree(syntax_analysis(text, logging=True), variables)
+        t.run()
 else:
     main()
-
-
-
-
-
-

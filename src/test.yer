@@ -1,7 +1,21 @@
+Func(fib){
 Expr{
-  a = 3;
-  a = a + 1;
+    a = 0;
+    b = 1;
+    c = 0;
+}
+For(i=0;i<$argv0;i=i+1){
+	Expr{
+	c = a + b;
+	a = b;
+	b = c;
+    }
 }
 Expr{
-  a = a+1;
+    return c;
+}
+}
+Expr{
+r = "aa" - "b";
+yell(r);
 }

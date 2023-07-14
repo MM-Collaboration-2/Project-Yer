@@ -66,11 +66,24 @@ class ConstructionTree():
         while len(text) > 0:
 
             m = search(self.pattern, text)
+
+            ###### выражения после найденной конструкции
+            if m is None:
+                node.subnodes.append(Node(text, []))
+                return node
+            ######
+
             new_header = text[m.start():m.end()]        # заголовок новой конструкции
             start_body = end_body = m.end()
             stack = Stack()
 
             end_body = self.end_body(text)             # находим конец данной конструкции
+
+
+            ####### выражения до найденной конструкции
+            if len(text[:m.start()]) > 0:
+                node.subnodes.append(Node(text[:m.start()], []))
+            #######
 
             # если найденная конструкция -- выражение
             # добавляем ноду с выражением. В глубину не парсим
@@ -127,10 +140,6 @@ class ConstructionTree():
 
 
 if __name__ == '__main__':
-    from callable import Function
-    from expression_block import ExpressionBlock
-    from block import Block
-    s = Storage({}, Stack())
     text = '''
     Func(add){
         Expr{return $argv0+$argv1;}
@@ -142,18 +151,27 @@ if __name__ == '__main__':
         yell(v)
     }
     '''
-    text = syntax_analysis(text)
+    
+    text1 = '''
+    Func(fib){
+        a = 0;
+        b = 1;
+        c = 0;
+        For(i=0;i<$argv0;i=i+1){
+            c = a + b;
+            a = b;
+            b = c;
+        }
+        c = 43;c=c+12;
+        return c;
+    }
+    r = fib(6);
+    yell(r);
+    '''
+    text = syntax_analysis(text1)
     s = Storage(BUILTINS, Stack())
     t = ConstructionTree(text, s)
     b = t.reduce()
 
     t.run()
-    #print(s.variables)
-    #print(t.run())
-    #t.print()
-
-    #print('---')
-    #e = ExpressionBlock('e=19;return e', s)
-    #b = Block([e])
-    #print(b)
     

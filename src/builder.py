@@ -14,7 +14,7 @@ class Builder():
         for head in CONSTRUCTIONS_HEADS.keys():
             if header.startswith(head):
                 return CONSTRUCTIONS_HEADS[head]
-        return None
+        return ExpressionBlock
 
     @classmethod
     def create_construction(cls, header: str, constructions: list[Construction], storage: Storage) -> Construction:

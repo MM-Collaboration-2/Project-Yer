@@ -26,7 +26,7 @@ class Expression(Construction):                                     # Выраж
         return self.string
         
     def run(self):                                                  # создаем конвейер из элементарных выражений
-        result: Object
+        result: Object = Integer(0)
         stack: Stack = Stack()
         for token in self.postfix:
             tok_type = token_type(token)
