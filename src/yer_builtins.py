@@ -22,12 +22,10 @@ def yell_func(params: list[Object]):
 
 def len_func(params: list[Object]):
 
-    print('in len', params)
     if len(params) < 1:
         return Integer(0)
 
     param = get_object(params[0])
-    print(param)
 
     if param.type in ['list', 'string']:
         return Integer(param.len())
@@ -35,7 +33,6 @@ def len_func(params: list[Object]):
 
 
 def get_func(params: list[Object]):
-    print('in get', params)
     if len(params) < 2:
         return Integer(0)
 
@@ -46,7 +43,7 @@ def get_func(params: list[Object]):
     if param1.type not in ['list', 'string'] or param2.type != 'integer':
         return Integer(0)
     if 0 <= param2.data < len(param1.data):
-        return param1.get([param2.data])
+        return param1.get(param2.data)
     return Integer(0)
 
 
