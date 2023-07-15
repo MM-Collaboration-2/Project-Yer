@@ -45,7 +45,6 @@ TOKEN_TYPES: dict[str, str] = {
 # Получаем список токенов из строки выражения в инфиксном виде
 def tokens(infixexpr: str):
     pattern = '|'.join(t for t in TOKEN_TYPES.keys())
-    
     return findall(pattern, infixexpr)
 
 

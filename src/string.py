@@ -14,5 +14,13 @@ class String(Object):
         if self.data.endswith('"'):
             self.data = self.data[:-1]
 
+    def len(self) -> int:
+        return len(self.data)
+
+
+    def get(self, index: int) -> Object:
+        return String(self.data[index])
+
+
     def __repr__(self):
-        return '"' + str(self.data) + '"'
+        return str(self.data)

@@ -15,24 +15,27 @@ def get_object(param: Object) -> Object:
 
 # functions to send to BuiltIn object
 def yell_func(params: list[Object]):
-    string = ' '.join(str(p) for p in params)
+    string = ''.join(str(p) for p in params)
     print(string)
     return Integer(len(params))
 
 
 def len_func(params: list[Object]):
 
+    print('in len', params)
     if len(params) < 1:
         return Integer(0)
 
     param = get_object(params[0])
+    print(param)
 
-    if param.type != 'list':
-        return Integer(0)
-    return Integer(param.len())
+    if param.type in ['list', 'string']:
+        return Integer(param.len())
+    return Integer(0)
 
 
 def get_func(params: list[Object]):
+    print('in get', params)
     if len(params) < 2:
         return Integer(0)
 
@@ -40,10 +43,10 @@ def get_func(params: list[Object]):
 
     param2: Object = get_object(params[1])
 
-    if param1.type != 'list' or param2.type != 'integer':
+    if param1.type not in ['list', 'string'] or param2.type != 'integer':
         return Integer(0)
-    if 0 <= param2.data < param1.len():
-        return param1.get(param2.data)
+    if 0 <= param2.data < len(param1.data):
+        return param1.get([param2.data])
     return Integer(0)
 
 
