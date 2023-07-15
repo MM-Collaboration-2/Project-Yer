@@ -9,5 +9,5 @@ Func(add){
 	return a+b;
 }
 
-r = foo(6+2, 4);
+r = add(6+2);
 yell(r);

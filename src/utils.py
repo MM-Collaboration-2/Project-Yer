@@ -8,6 +8,8 @@ TOKEN_TYPES: dict[str, str] = {
 
         # перед переменными
         '[a-zA-Z_][a-zA-Z0-9_]*\ *\(.*?\)': 'function',
+        #'[a-zA-Z_][a-zA-Z0-9_]*\ *\(': 'function',
+
 
         # отрицательные числа перед операциями
         '-\d+': 'integer',
@@ -23,27 +25,29 @@ TOKEN_TYPES: dict[str, str] = {
         # все буквенно-циферные комбинации
         '[a-zA-Z_][a-zA-Z0-9_]*': 'variable',
 
-        # уникальные сами по себе
-        '\".*?\"': 'string',
-        '\[.*?\]': 'list',
-        '\$argv\d+': 'argument',
-
         # скобки
         '\(': 'open_bracket',
         '\)': 'close_bracket',
-                             }
+        '\[': 'list',
+        '\]': 'square_close_bracket',
+
+        # уникальные сами по себе
+        '\".*?\"': 'string',
+
+        # список после скобок
+        '\[.*?\]': 'list',
+        '\$argv\d+': 'argument',
+        ',': 'comma',
+
+        }
 
 
 # Получаем список токенов из строки выражения в инфиксном виде
 def tokens(infixexpr: str):
-    d = {}    
     pattern = '|'.join(t for t in TOKEN_TYPES.keys())
     
     return findall(pattern, infixexpr)
 
-
-def recover_tokens(token_list: list[str]):
-    pass
 
 # Определяем тип токена
 def token_type(token: str) -> str:
@@ -53,8 +57,92 @@ def token_type(token: str) -> str:
     return 'other'
 
 
+def smart_split(expression: str):
+    parts = expression.split(',')
+    valid_parts = []
+    index: int = 0
+    while index < len(parts):
+        part = parts[index]
 
-# Получает строку, возвращает массив с токенами в постыиксно форме:
+        # проверка строки
+        if part.strip().startswith('"') and not part.strip().endswith('"'):
+            while True:
+                index += 1
+                new_part = parts[index]
+                part +=  ',' + new_part
+                if new_part.strip().endswith('"'):
+                    break
+            
+        # проверка списка
+        if part.strip().startswith('['):
+            brackets: int = 0
+
+            # считаем скобочки в начале
+            for char in part.strip():
+                if char == '[':
+                    brackets += 1
+                else:
+                    break
+
+            # считаем скобочки в конце
+            for char in list(reversed(part.strip())):
+                if char == ']':
+                    brackets -= 1
+                else:
+                    break
+
+            while brackets != 0:
+                index += 1
+                new_part = parts[index]
+                part += ',' + new_part
+
+                # считаем скобочки в начале
+                for char in new_part.strip():
+                    if char == '[':
+                        brackets += 1
+                    else:
+                        break
+
+                # считаем скобочки в конце
+                for char in list(reversed(new_part.strip())):
+                    if char == ']':
+                        brackets -= 1
+                    else:
+                        break
+
+
+        index += 1
+        valid_parts.append(part)
+    valid_parts = [p for p in valid_parts if p]
+
+    return valid_parts
+
+
+def get_tokens(expression: str):
+    pattern = '|'.join(t for t in TOKEN_TYPES.keys())
+    args = findall(pattern, expression)
+    new_args = []
+    index: int = 0
+    while index < len(args):
+        token = args[index]
+        if token == '[':
+            brackets: int = 1
+            while brackets != 0:
+                index += 1
+                new_token = args[index]
+                token += new_token
+                if new_token == '[':
+                    brackets += 1
+                elif new_token == ']':
+                    brackets -= 1
+
+        index += 1
+        new_args.append(token)
+
+    return new_args
+
+
+# Получает строку, возвращает массив с токенами в постынфиксной форме:
 # 'a = b + 2' -> ['a', 'b', '2', '+', '=']
 def infix_to_postfix(infixexpr) -> list[str]:
     prec = {}
@@ -68,7 +156,7 @@ def infix_to_postfix(infixexpr) -> list[str]:
     op_stack = Stack()
     postfix_list = []
 
-    token_list = tokens(infixexpr)
+    token_list = get_tokens(infixexpr)
 
     for token in token_list:
         tok_type = token_type(token)
@@ -152,8 +240,6 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
     return analysed_text
     
 
-
 if __name__ == '__main__':
-    text = '[1+2]'
-    for t in tokens(text):
-        print(token_type(t), t)
+    text = 'return a() + [[1, 3], "str"]'
+    print(infix_to_postfix(text))

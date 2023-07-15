@@ -1,4 +1,4 @@
-from utils import tokens, token_type, infix_to_postfix
+from utils import tokens, token_type, infix_to_postfix, smart_split
 from stack import Stack
 from object import Object
 from void import Void
@@ -100,7 +100,9 @@ class Expression(Construction):                                     # Выраж
 
         #exprs: list[Expression] = tokens(token)
         #####!!!!!!FIXME разбивает внутренние листы тоже
-        exprs: list[Expression] = token.split(',')
+        #exprs: list[Expression] = token.split(',')
+        exprs: list[Expression] = smart_split(token)
+
 
         for expr in exprs:
             expr = Expression(expr, storage, True)
@@ -201,5 +203,7 @@ class Expression(Construction):                                     # Выраж
         return f'{self.string};'
 
 if __name__ == '__main__':
-    pass
-
+    text = '[1+2] + ["aboba", []]'
+    s = Storage({}, Stack())
+    e = Expression(text, s, True)
+    print(e.run())

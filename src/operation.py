@@ -77,3 +77,4 @@ class Operation():                                                  # Класс
         else:
             return cls.operate(lop, rop, op, storage)
 
+
