@@ -1,13 +1,7 @@
-Func(add){
-  a = a + 1;
-  yell(a);
-  If(a < 10){
-    add();
-    test();
-  }
+a = 3;
+If  (a <10){
+	If(a == 3){
+		a = 10;         'вложенные констракшены тоже робят'
+	}
 }
-Func(test){
-  yell("test");
-  add();
-}
-add();
+yell(a);

@@ -8,9 +8,6 @@ from variable import Variable
 from storage import Storage
 from expression import Expression
 from construction_tree import ConstructionTree
-######
-from sys import setrecursionlimit
-######
 
 def main():
     print(
@@ -60,9 +57,6 @@ def main():
             print(outp)
 
 
-#####
-setrecursionlimit(1000)
-#####
 if sys.argv[1:]: # файл указан
     with open(sys.argv[1], "r") as f:
         variables = Storage(BUILTINS, Stack())
