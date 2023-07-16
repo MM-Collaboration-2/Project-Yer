@@ -11,15 +11,15 @@ TOKEN_TYPES: dict[str, str] = {
         #'[a-zA-Z_][a-zA-Z0-9_]*\ *\(': 'function',
 
         # отрицательные числа перед операциями
-        '-\d+': 'integer',
         '-\d+\.\d+': 'float',
+        '-\d+': 'integer',
 
         # return перед переменными
         '[+\-*/=<>!][=]?|return': 'operation',
 
         # положительные числа после операциями
-        '\d+': 'integer',
         '\d+\.\d+': 'float',
+        '\d+': 'integer',
 
         # все буквенно-циферные комбинации
         '[a-zA-Z_][a-zA-Z0-9_]*': 'variable',
@@ -246,6 +246,6 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
     
 
 if __name__ == '__main__':
-    text = 'return countdown(a - 1)'
+    text = '3.0'
     for t in get_tokens(text):
         print(t, token_type(t))

@@ -3,6 +3,8 @@ from integer import Integer
 from string import String
 from variable import Variable
 from callable import BuiltIn
+from execute import execute
+
 
 
 
@@ -54,6 +56,15 @@ def type_func(params: list[Object]):
         return String(param.type)
     return Integer(0)
     
+
+
+
+
+def screw_on_func(params: list[Object]):
+    for param in params:
+        if param.type == 'string':
+            execute(param.data)
+
 
 
 

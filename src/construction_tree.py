@@ -6,7 +6,6 @@ from construction import Construction
 from expression_block import ExpressionBlock
 from construction_types import CONSTRUCTIONS_TYPES
 from builder import Builder
-from yer_builtins import BUILTINS
 
 
 class Node():
@@ -168,6 +167,7 @@ if __name__ == '__main__':
     r = fib(6);
     yell(r);
     '''
+    from yer_builtins import BUILTINS
     text = syntax_analysis(text)
     s = Storage(BUILTINS, Stack())
     t = ConstructionTree(text, s)
