@@ -3,7 +3,9 @@ from integer import Integer
 from string import String
 from variable import Variable
 from callable import BuiltIn
+from storage import Storage
 from execute import execute
+from list import List
 
 
 
@@ -17,13 +19,13 @@ def get_object(param: Object) -> Object:
 
 
 # functions to send to BuiltIn object
-def yell_func(params: list[Object]):
+def yell_func(params: list[Object], storage: Storage):
     string = ''.join(str(p) for p in params)
     print(string)
     return Integer(len(params))
 
 
-def len_func(params: list[Object]):
+def len_func(params: list[Object], storage: Storage):
 
     if len(params) < 1:
         return Integer(0)
@@ -35,7 +37,7 @@ def len_func(params: list[Object]):
     return Integer(0)
 
 
-def get_func(params: list[Object]):
+def get_func(params: list[Object], storage: Storage):
     if len(params) < 2:
         return Integer(0)
 
@@ -50,21 +52,30 @@ def get_func(params: list[Object]):
     return Integer(0)
 
 
-def type_func(params: list[Object]):
+def type_func(params: list[Object], storage: Storage):
     if len(params) > 0:
         param = get_object(params[0])
         return String(param.type)
     return Integer(0)
     
 
-
-
-
-def screw_on_func(params: list[Object]):
+def screw_on_func(params: list[Object], storage: Storage):
+    counter: int = 0
     for param in params:
         if param.type == 'string':
-            execute(param.data)
+            if execute(param.data, storage):
+                counter += 1
+    return Integer(counter)
+    
 
+def defined_func(params: list[Object], storage: Storage):
+    lst = []
+    for name, data in storage.variables.items():
+        sublst = []
+        sublst.append(String(name))
+        sublst.append(data)
+        lst.append(List(sublst))
+    return List(lst)
 
 
 
@@ -74,11 +85,13 @@ BUILTINS: dict[str, Variable] = {
     'len': Variable('len', BuiltIn(len_func)),
     'get': Variable('get', BuiltIn(get_func)),
     'type': Variable('type', BuiltIn(type_func)),
+    'screw_on': Variable('screw_on', BuiltIn(screw_on_func)),
+    'defined': Variable('defined', BuiltIn(defined_func)),
 }
 
 if __name__ == '__main__':
-    from list import List
-    lst: list[Object] = [Integer(1), Integer(2), Integer(3)] 
-    i: Integer = Integer(12)
-    s: String = String('"aboba"')
-    print(type_func([s]))
+    from stack import Stack
+    string = String("test")
+    s = Storage(BUILTINS, Stack())
+    screw_on_func([string], s)
+    print(defined_func([], s))

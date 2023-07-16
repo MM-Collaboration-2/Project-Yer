@@ -166,7 +166,7 @@ class Expression(Construction):                                     # Выраж
                 # builtin функции не изменяют стек списков парамеров
                 # так как из выполнение не предусмтаривает 
                 # использование оператора return
-                obj: Object = function.run(argument_list)
+                obj: Object = function.run(argument_list, storage)
 
         else:
             obj: Object = Integer(0)

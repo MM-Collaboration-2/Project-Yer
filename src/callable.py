@@ -1,6 +1,7 @@
 from object import Object
 from integer import Integer
 from block import Block
+from storage import Storage
 
 
 class Function(Object):
@@ -29,8 +30,8 @@ class BuiltIn(Object):
     def __init__(self, function: callable):
         self.function: callable = function
 
-    def run(self, arguments: list[Object]) -> Object:
-        obj: Object = self.function(arguments)
+    def run(self, arguments: list[Object], storage: Storage) -> Object:
+        obj: Object = self.function(arguments, storage)
         return obj
         
     def __repr__(self):

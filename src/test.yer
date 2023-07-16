@@ -1,3 +1,6 @@
+Func(foo){
+	return $argv0;
+}
 a = 3;
 If  (a <10){
 	If(a == 3){

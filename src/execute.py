@@ -7,10 +7,12 @@ from block import Block
 
 
 def read_text(file: str):
-    with open(file, 'r') as f:
-        text = f.read();
-        return text
-    return ''
+    try:
+        with open(file, 'r') as f:
+            text = f.read();
+            return text
+    except:
+        return ''
 
 
 def execute(file: str, storage: Storage):
@@ -21,3 +23,5 @@ def execute(file: str, storage: Storage):
         tree = ConstructionTree(text, storage)
         block = tree.reduce()
         block.run()
+        return True
+    return False
