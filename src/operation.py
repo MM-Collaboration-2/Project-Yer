@@ -25,6 +25,7 @@ class Operation():                                                  # Класс
             '<=': lambda lop, rop: lop <= rop,
             '>=': lambda lop, rop: lop >= rop,
             '==': lambda lop, rop: lop == rop,
+            '!=': lambda lop, rop: lop != rop,
             }
 
 
@@ -65,7 +66,12 @@ class Operation():                                                  # Класс
         lop = cls.__get_object(lop, storage)
         rop = cls.__get_object(rop, storage)
         if cls.__valid_operation(lop, rop, op, storage):
-            basic_type = BASIC_TYPES[lop.type]
+
+            if op in ['<', '>', '<=', '>=', '==', '!=']:
+                basic_type = Integer
+            elif op in ['+', '-', '*', '/']:
+                basic_type = BASIC_TYPES[lop.type]
+
             func = cls.operations[op]
             return basic_type(func(lop.data, rop.data))
         return Integer(0)

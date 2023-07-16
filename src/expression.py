@@ -104,6 +104,7 @@ class Expression(Construction):                                     # Выраж
         exprs: list[Expression] = smart_split(token)
 
 
+        ### здесь $argv в экспрешне не валидируется
         for expr in exprs:
             expr = Expression(expr, storage, True)
             obj = expr.run()

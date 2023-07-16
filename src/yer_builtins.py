@@ -1,5 +1,6 @@
 from object import Object
 from integer import Integer
+from string import String
 from variable import Variable
 from callable import BuiltIn
 
@@ -47,14 +48,26 @@ def get_func(params: list[Object]):
     return Integer(0)
 
 
+def type_func(params: list[Object]):
+    if len(params) > 0:
+        param = get_object(params[0])
+        return String(param.type)
+    return Integer(0)
+    
+
+
+
 BUILTINS: dict[str, Variable] = {
 
     'yell': Variable('yell', BuiltIn(yell_func)),
     'len': Variable('len', BuiltIn(len_func)),
     'get': Variable('get', BuiltIn(get_func)),
+    'type': Variable('type', BuiltIn(type_func)),
 }
 
 if __name__ == '__main__':
     from list import List
     lst: list[Object] = [Integer(1), Integer(2), Integer(3)] 
-    print(len_func([List(lst)]))
+    i: Integer = Integer(12)
+    s: String = String('"aboba"')
+    print(type_func([s]))

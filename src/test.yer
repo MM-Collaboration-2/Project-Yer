@@ -1,13 +1,19 @@
-Func(foo){
-	If($argv0>5){
-		return $argv1;
+Func(countdown){
+	yell($argv0);
+	If($argv0 > 0){
+		countdown($argv0 - 1);
 	}
+	return;
 }
 Func(add){
-	a = $argv0;
-	b = $argv1;
-	return a+b;
+  return $argv0 + $argv1 + $argv2 + $argv3;
+  
+}
+Func(sum_square){
+  c = add($argv0, $argv1);
+  return c * c;
 }
 
-r = add(6+2, 4);
-yell(r);
+countdown(4);
+s = sum_square(4, 4);
+yell(s);

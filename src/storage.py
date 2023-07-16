@@ -10,10 +10,13 @@ class Storage():                            # Хранилище перемен�
         self.variables: dict[str, Variable] = variables
         ####
         self.arguments_stack: Stack = arguments_stack
+        self.recursion_limit: int = 100
 
     ####
     def add_arguments(self, arguments: list[Object]):
         self.arguments_stack.push(arguments)
+        if len(self.arguments_stack.list) >= self.recursion_limit:
+            raise BaseException("reached recursion limit")
 
     ####
     def get_arguments(self) -> Object:
