@@ -14,18 +14,18 @@ from callable import Function, BuiltIn
 
 class Expression(Construction):                                     # Выражение состоит из одного или нескольких базовых выражений
     name: str = 'Exprssion'
-    def __init__(self, string: str, storage: Storage, return_flag: bool=False):
+    def __init__(self, stringg: str, storage: Storage, return_flag: bool=False):
         self.storage: Storage = storage
-        self.string: str = string
+        self.stringg: str = stringg
         self.postfix: list[str] = infix_to_postfix(self.clear())
         self.return_flag: bool = return_flag
         self.delete_flag: bool = False
 
 
     def clear(self):
-        if self.string.startswith('Expr{'):
-            return self.string[:-1].replace('Expr{', '')
-        return self.string
+        if self.stringg.startswith('Expr{'):
+            return self.stringg[:-1].replace('Expr{', '')
+        return self.stringg
         
     def run(self):                                                  # создаем конвейер из элементарных выражений
         #result: Object = Integer(0)
@@ -201,7 +201,7 @@ class Expression(Construction):                                     # Выраж
 
 
     def __repr__(self):
-        return f'{self.string};'
+        return f'{self.stringg};'
 
 if __name__ == '__main__':
     text = '[1+2] + ["aboba", []]'

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import re
 import sys
 from utils import syntax_analysis
@@ -22,8 +21,8 @@ https://github.com/MM-Collaboration-2/Project-Yer/tree/main
     ERASE_LINE = '\x1b[2K' 
     variables = Storage(BUILTINS, Stack())
     while True:
-        input_string = '>>> '
-        inp = input(input_string)
+        input_stringg = '>>> '
+        inp = input(input_stringg)
         if inp == 'q':
             break
         if len(inp) == 0:
@@ -32,13 +31,13 @@ https://github.com/MM-Collaboration-2/Project-Yer/tree/main
             if re.fullmatch('.*{.*', inp):
                 bracket_diff = inp.count('{') - inp.count('}')
                 buf = inp
-                input_string = '>>> ' + bracket_diff * '  '
+                input_stringg = '>>> ' + bracket_diff * '  '
                 while(bracket_diff > 0):
-                    inp = input(input_string)               # inp - всегда текущая строка
+                    inp = input(input_stringg)               # inp - всегда текущая строка
                     bracket_diff += inp.count('{') - inp.count('}')
-                    input_string = '>>> ' + bracket_diff * '  '
+                    input_stringg = '>>> ' + bracket_diff * '  '
                     if re.fullmatch('}.*', inp):
-                        print(CURSOR_UP_ONE+ERASE_LINE+input_string+inp)
+                        print(CURSOR_UP_ONE+ERASE_LINE+input_stringg+inp)
                     buf += inp
                 t = ConstructionTree(syntax_analysis(buf, logging=True), variables)
                 outp = t.run()

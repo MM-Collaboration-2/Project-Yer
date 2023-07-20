@@ -3,9 +3,9 @@ from object import Object
 
 class String(Object):
     regex = '\".*?\"'
-    type: str = 'string'
-    def __init__(self, string):
-        self.data = str(string)
+    type: str = 'stringg'
+    def __init__(self, stringg):
+        self.data = str(stringg)
         self.validate()
 
     def validate(self):

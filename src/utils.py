@@ -31,7 +31,7 @@ TOKEN_TYPES: dict[str, str] = {
         '\]': 'square_close_bracket',
 
         # уникальные сами по себе
-        '\".*?\"': 'string',
+        '\".*?\"': 'stringg',
 
         # список после скобок
         '\[.*?\]': 'list',
@@ -169,7 +169,7 @@ def infix_to_postfix(infixexpr) -> list[str]:
             postfix_list.append(token)
         elif tok_type == 'float':                   # если дробное
             postfix_list.append(token)
-        elif tok_type == 'string':                  # если строка
+        elif tok_type == 'stringg':                  # если строка
             postfix_list.append(token)
         elif tok_type == 'variable':                # если переменная
             postfix_list.append(token)
@@ -204,7 +204,7 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
     brackets_closed = (')', '}', ']')
     stack = Stack()
     comment_flag = False
-    string_flag = False
+    stringg_flag = False
     for ch in text:
         if ch == '\n': # убираем перенос строки
             continue
@@ -214,10 +214,10 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
         if comment_flag:
             continue
         if ch == '"':
-            string_flag = not(string_flag)
+            stringg_flag = not(stringg_flag)
             analysed_text += ch
             continue
-        if string_flag:
+        if stringg_flag:
             analysed_text += ch
             continue
         else:
@@ -246,6 +246,8 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
     
 
 if __name__ == '__main__':
-    text = '3.0'
-    for t in get_tokens(text):
-        print(t, token_type(t))
+    # text = '3.0'
+    # for t in get_tokens(text):
+    #     print(t, token_type(t))
+    text = 'list = [3, [1, 2], 4]'
+    print(smart_split(text))

@@ -12,15 +12,15 @@ from storage import Storage
 
 class Expression(Construction):                                     # Выражение состоит из одного или нескольких базовых выражений
     name: str = 'Exprssion'
-    def __init__(self, string: str, storage: Storage):
+    def __init__(self, stringg: str, storage: Storage):
         self.storage: Storage = storage
-        self.string: str = string
+        self.stringg: str = stringg
         self.postfix: list[str] = infix_to_postfix(self.clear())
 
     def clear(self):
-        if self.string.startswith('Expr{'):
-            return self.string[:-1].replace('Expr{', '')
-        return self.string
+        if self.stringg.startswith('Expr{'):
+            return self.stringg[:-1].replace('Expr{', '')
+        return self.stringg
         
     def run(self):                                                  # создаем конвейер из элементарных выражений
         result: Object
@@ -56,16 +56,16 @@ class Expression(Construction):                                     # Выраж
         return result                                               # для использования в условиях и циклах
 
     @classmethod
-    def validate_list(cls, string: str, storage: Storage) -> List:
+    def validate_list(cls, stringg: str, storage: Storage) -> List:
         lst = []
 
         # очистка от скобочек
-        if string.startswith('['):
-            string = string[1:]
-        if string.endswith(']'):
-            string = string[:-1]
+        if stringg.startswith('['):
+            stringg = stringg[1:]
+        if stringg.endswith(']'):
+            stringg = stringg[:-1]
 
-        objects = tokens(string)
+        objects = tokens(stringg)
         for token in objects:
             tok_type = token_type(token)
             lst.append(cls.validate_operand(token, tok_type, storage))
@@ -129,27 +129,27 @@ class Expression(Construction):                                     # Выраж
 
 
     def __repr__(self):
-        return f'{self.string};'
+        return f'{self.stringg};'
 
 
 class ExpressionBlock(Construction):
     regex: str = "Expr"
     name: str = 'Expr'
-    def __init__(self, string: str, storage: Storage):
+    def __init__(self, stringg: str, storage: Storage):
         self.storage: Storage = storage
-        self.string: str = string
-        self.expressions: list[Expression] = self.string_to_expressions()
+        self.stringg: str = stringg
+        self.expressions: list[Expression] = self.stringg_to_expressions()
 
-    def string_to_expressions(self):
-        string = self.clear()
-        expressions: list[str] = [s for s in string.split(';') if s]
+    def stringg_to_expressions(self):
+        stringg = self.clear()
+        expressions: list[str] = [s for s in stringg.split(';') if s]
         expressions = [Expression(e, self.storage) for e in expressions] 
         return expressions
 
     def clear(self):
-        if self.string.startswith('Expr{'):
-            return self.string[:-1].replace('Expr{', '')
-        return self.string
+        if self.stringg.startswith('Expr{'):
+            return self.stringg[:-1].replace('Expr{', '')
+        return self.stringg
 
     def run(self):
         result: Object = Integer(0)

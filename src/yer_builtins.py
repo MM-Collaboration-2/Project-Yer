@@ -1,6 +1,6 @@
 from object import Object
 from integer import Integer
-from string import String
+from stringg import String
 from variable import Variable
 from callable import BuiltIn
 from storage import Storage
@@ -20,8 +20,8 @@ def get_object(param: Object) -> Object:
 
 # functions to send to BuiltIn object
 def yell_func(params: list[Object], storage: Storage):
-    string = ''.join(str(p) for p in params)
-    print(string)
+    stringg = ''.join(str(p) for p in params)
+    print(stringg)
     return Integer(len(params))
 
 
@@ -32,7 +32,7 @@ def len_func(params: list[Object], storage: Storage):
 
     param = get_object(params[0])
 
-    if param.type in ['list', 'string']:
+    if param.type in ['list', 'stringg']:
         return Integer(param.len())
     return Integer(0)
 
@@ -45,7 +45,7 @@ def get_func(params: list[Object], storage: Storage):
 
     param2: Object = get_object(params[1])
 
-    if param1.type not in ['list', 'string'] or param2.type != 'integer':
+    if param1.type not in ['list', 'stringg'] or param2.type != 'integer':
         return Integer(0)
     if 0 <= param2.data < len(param1.data):
         return param1.get(param2.data)
@@ -62,7 +62,7 @@ def type_func(params: list[Object], storage: Storage):
 def screw_on_func(params: list[Object], storage: Storage):
     counter: int = 0
     for param in params:
-        if param.type == 'string':
+        if param.type == 'stringg':
             if execute(param.data, storage):
                 counter += 1
     return Integer(counter)
@@ -91,7 +91,7 @@ BUILTINS: dict[str, Variable] = {
 
 if __name__ == '__main__':
     from stack import Stack
-    string = String("test")
+    stringg = String("test")
     s = Storage(BUILTINS, Stack())
-    screw_on_func([string], s)
+    screw_on_func([stringg], s)
     print(defined_func([], s))

@@ -45,7 +45,7 @@ class Operation():                                                  # Класс
         lop = cls.__get_object(lop, storage)
         rop = cls.__get_object(rop, storage)
         if cls.__same_types(lop, rop):
-            if lop.type in ['list', 'string'] and op in ['-', '*', '/']:
+            if lop.type in ['list', 'stringg'] and op in ['-', '*', '/']:
                 return False
             if rop.type in ['integer', 'float']:
                 if rop.data == 0 and op == '/':

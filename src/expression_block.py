@@ -8,22 +8,22 @@ from void import Void
 class ExpressionBlock(Construction):
     regex: str = "Expr"
     name: str = 'Expr'
-    def __init__(self, string: str, storage: Storage, result_flag: bool=False):
+    def __init__(self, stringg: str, storage: Storage, result_flag: bool=False):
         self.storage: Storage = storage
-        self.string: str = string
+        self.stringg: str = stringg
         self.result_flag = result_flag
-        self.expressions: list[Expression] = self.string_to_expressions()
+        self.expressions: list[Expression] = self.stringg_to_expressions()
 
-    def string_to_expressions(self):
-        string = self.clear()
-        expressions: list[str] = [s for s in string.split(';') if s]
+    def stringg_to_expressions(self):
+        stringg = self.clear()
+        expressions: list[str] = [s for s in stringg.split(';') if s]
         expressions = [Expression(e, self.storage, self.result_flag) for e in expressions] 
         return expressions
 
     def clear(self):
-        if self.string.startswith('Expr{'):
-            return self.string[:-1].replace('Expr{', '')
-        return self.string
+        if self.stringg.startswith('Expr{'):
+            return self.stringg[:-1].replace('Expr{', '')
+        return self.stringg
 
     def run(self):
         result: Object = Void()
