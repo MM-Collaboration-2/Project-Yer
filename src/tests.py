@@ -1,8 +1,19 @@
 import unittest
+
 from construction_tree import ConstructionTree
+
 from utils import smart_split, get_tokens, syntax_analysis
+
 from storage import Storage
+
 from yer_builtins import BUILTINS
+
+from operation import Operation
+
+from integer import Integer
+from string import String
+from list import List
+from float import Float
 
 
 
@@ -39,6 +50,106 @@ class UtilsTests(unittest.TestCase):
         res = get_tokens(text)
         self.assertEqual(res, ['foo([a, b], 0)', '/', '"str"'])
 
+
+
+class OperationTests(unittest.TestCase):
+
+    def test_add_ints(self):
+        lop = Integer(1)
+        rop = Integer(2)
+        op = '+'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        self.assertEqual(res.data, 3)
+
+    def test_sub_ints(self):
+        lop = Integer(1)
+        rop = Integer(2)
+        op = '-'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        self.assertEqual(res.data, -1)
+
+    def test_mul_ints(self):
+        lop = Integer(1)
+        rop = Integer(2)
+        op = '*'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        self.assertEqual(res.data, 2)
+
+    def test_div_ints(self):
+        lop = Integer(1)
+        rop = Integer(2)
+        op = '/'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        self.assertEqual(res.data, 0)
+
+    def test_add_floats(self):
+        lop = Float(1.2)
+        rop = Float(0)
+        op = '+'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        #self.assertEqual(res, )
+
+    def test_sub_floats(self):
+        lop = Float(1.2)
+        rop = Float(0)
+        op = '-'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        #self.assertEqual(res, )
+
+    def test_mul_floats(self):
+        lop = Float(1.2)
+        rop = Float(2.0)
+        op = '*'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        self.assertEqual(res.data, 2.4)
+
+    def test_div_floats(self):
+        lop = Float(2.25)
+        rop = Float(1.5)
+        op = '/'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        self.assertEqual(res.data, 1.5)
+
+    def test_div_zero(self):
+        lop = Float(5)
+        rop = Float(0)
+        op = '/'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        self.assertEqual(res.data, 0)
+
+    def test_add_strings(self):
+        lop = String("abo")
+        rop = String("ba")
+        op = '+'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        self.assertEqual(res.data, 'aboba')
+
+    def test_sub_strings(self):
+        lop = String("abo")
+        rop = String("ba")
+        op = '-'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        self.assertEqual(res.data, 0)
+
+    def test_sum_lists(self):
+        lop = List([Integer(0), String("cc")])
+        rop = List([List([])])
+        op = '+'
+        storage = Storage({})
+        res = Operation.operate(lop, rop, op, storage)
+        res = [obj.data for obj in res.data]
+        self.assertEqual(res, [0, 'cc', []])
 
 
 class TreeTests(unittest.TestCase):
