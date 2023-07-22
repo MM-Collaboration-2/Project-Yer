@@ -148,7 +148,7 @@ if __name__ == '__main__':
     c = 103;
     myfunc(c);
     '''
-    
+
     text1 = '''
     Func(fib){
         a = 0;
@@ -161,14 +161,24 @@ if __name__ == '__main__':
         }
         return c;
     }
-    For(j=0;j<17;j=j+1){
-        yell(fib(j));
+    return fib(5);
+    '''
+
+    text2 = '''
+    Func(countdown){
+        tmp = $argv0 + [$argv1]	
+        If($argv1 > 0){
+            countdown(tmp, $argv1-1);
+        }
+        return tmp;
     }
-    yell(i, " ", j);
+
+    l = countdown([], 5);
+    return l;
     '''
     from yer_builtins import BUILTINS
     text = syntax_analysis(text)
-    s = Storage(BUILTINS, Stack())
+    s = Storage(BUILTINS)
     t = ConstructionTree(text1, s)
     b = t.reduce()
 

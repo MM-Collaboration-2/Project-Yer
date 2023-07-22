@@ -6,7 +6,7 @@ from construction import Construction
 
 
 class Storage():                            # Хранилище переменных
-    def __init__(self, variables: dict, arguments_stack: Stack):         # и функций в будущем
+    def __init__(self, variables: dict, arguments_stack: Stack=Stack()):         # и функций в будущем
         self.variables: dict[str, Variable] = variables
         ####
         self.arguments_stack: Stack = arguments_stack
