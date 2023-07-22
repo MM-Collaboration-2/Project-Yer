@@ -55,6 +55,22 @@ def token_type(token: str) -> str:
     return 'other'
 
 
+def brackets_not_in_string(text: str, open_bracket='(', close_bracket=')') -> bool:
+    quotes: int = 0
+    brackets: int = 0
+    for ch in text:
+        if ch == '"':
+            quotes += 1
+            quotes %= 2
+        
+        if quotes == 0 and ch == open_bracket:
+            brackets += 1
+        if quotes == 0 and ch == close_bracket:
+            brackets -= 1
+
+    return brackets
+
+
 def smart_split(expression: str):
     parts = expression.split(',')
     valid_parts = []
@@ -70,43 +86,26 @@ def smart_split(expression: str):
                 part +=  ',' + new_part
                 if new_part.strip().endswith('"'):
                     break
-            
-        # проверка списка
-        if part.strip().startswith('['):
-            brackets: int = 0
 
-            # считаем скобочки в начале
-            for char in part.strip():
-                if char == '[':
-                    brackets += 1
-                else:
-                    break
-
-            # считаем скобочки в конце
-            for char in list(reversed(part.strip())):
-                if char == ']':
-                    brackets -= 1
-                else:
-                    break
-
+        # проверка функции
+        if brackets_not_in_string(part) > 0:
+            brackets: int = brackets_not_in_string(part)
             while brackets != 0:
                 index += 1
                 new_part = parts[index]
                 part += ',' + new_part
+                brackets += brackets_not_in_string(new_part)
 
-                # считаем скобочки в начале
-                for char in new_part.strip():
-                    if char == '[':
-                        brackets += 1
-                    else:
-                        break
 
-                # считаем скобочки в конце
-                for char in list(reversed(new_part.strip())):
-                    if char == ']':
-                        brackets -= 1
-                    else:
-                        break
+        # проверка списка
+        if brackets_not_in_string(part, '[', ']') > 0:
+            brackets: int = brackets_not_in_string(part, '[', ']')
+            while brackets != 0:
+                index += 1
+                new_part = parts[index]
+                part += ',' + new_part
+                brackets += brackets_not_in_string(new_part, '[', ']')
+
 
 
         index += 1
@@ -130,16 +129,25 @@ def get_tokens(expression: str):
                 token = token[1:]
 
 
+        # списки
         if token == '[':
             brackets: int = 1
             while brackets != 0:
                 index += 1
                 new_token = args[index]
                 token += new_token
-                if new_token == '[':
-                    brackets += 1
-                elif new_token == ']':
-                    brackets -= 1
+                brackets += brackets_not_in_string(new_token, '[', ']')
+
+
+        # функции
+        if len(token) > 1 and brackets_not_in_string(token) > 0:
+            brackets: int = brackets_not_in_string(token)
+            while brackets != 0:
+                index += 1
+                new_token = args[index]
+                token += new_token
+                brackets += brackets_not_in_string(new_token)
+
 
         index += 1
         new_args.append(token)
@@ -246,6 +254,7 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
     
 
 if __name__ == '__main__':
-    text = '3.0'
-    for t in get_tokens(text):
-        print(t, token_type(t))
+    text = 'var1 + [["huh"], s]'
+    print(get_tokens(text))
+    #print(smart_split(text))
+

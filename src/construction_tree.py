@@ -59,8 +59,6 @@ class ConstructionTree():
 
     def parse(self, text: str, header: str):
         node = Node(header, [])                         # заголовок конструкции
-        ###
-        #print(text)
 
         while len(text) > 0:
 
@@ -161,18 +159,19 @@ if __name__ == '__main__':
             a = b;
             b = c;
         }
-        c = 43;c=c+12;
         return c;
     }
-    r = fib(6);
-    yell(r);
+    For(j=0;j<17;j=j+1){
+        yell(fib(j));
+    }
+    yell(i, " ", j);
     '''
     from yer_builtins import BUILTINS
     text = syntax_analysis(text)
     s = Storage(BUILTINS, Stack())
-    t = ConstructionTree(text, s)
+    t = ConstructionTree(text1, s)
     b = t.reduce()
 
     r = t.run()
-    print(r)
+    print('\nresult: ', r)
     

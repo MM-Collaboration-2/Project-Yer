@@ -1,10 +1,10 @@
-Func(foo){
-	return $argv0;
-}
-a = 3;
-If  (a <10){
-	If(a == 3){
-		a = 10;         'вложенные констракшены тоже робят'
+Func(countdown){
+	tmp = $argv0 + [$argv1]	
+	If($argv1 > 0){
+		countdown(tmp, $argv1-1);
 	}
+	return tmp;
 }
-yell(a);
+
+l = countdown([], 5);
+yell(l)

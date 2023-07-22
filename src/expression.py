@@ -98,9 +98,6 @@ class Expression(Construction):                                     # Выраж
 
         lst: list[Object] = []
 
-        #exprs: list[Expression] = tokens(token)
-        #####!!!!!!FIXME разбивает внутренние листы тоже
-        #exprs: list[Expression] = token.split(',')
         exprs: list[Expression] = smart_split(token)
 
 
