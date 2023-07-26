@@ -8,7 +8,7 @@ from block import Block
 
 
 class If(Construction):
-    regex: str = 'If\(.*?\)'
+    regex: str = 'If\(.*?\){'
     name = 'If'
     def __init__(self, header: str, block: Block, storage: Storage):
         self.storage: Storage = storage
@@ -21,7 +21,7 @@ class If(Construction):
 
     def clear(self):
         if self.header.startswith('If('):
-            return self.header[:-1].replace('If(', '')
+            return self.header[:-2].replace('If(', '')
         return self.header
 
     def run(self) -> Object:
@@ -37,7 +37,7 @@ class If(Construction):
 
 
 class While(Construction):
-    regex: str = 'While\(.*?\)'
+    regex: str = 'While\(.*?\){'
     name = 'While'
     def __init__(self, header: str, block: Block, storage: Storage):
         self.storage: Storage = storage
@@ -60,7 +60,7 @@ class While(Construction):
 
     def clear(self):
         if self.header.startswith('While('):
-            return self.header[:-1].replace('While(', '')
+            return self.header[:-2].replace('While(', '')
         return self.header
 
     def __repr__(self):
@@ -69,7 +69,7 @@ class While(Construction):
 
 
 class For(Construction):
-    regex: str = 'For\(.*?\)'
+    regex: str = 'For\(.*?\){'
     name = 'For'
     def __init__(self, header: str, block: Block, storage: Storage):
         self.storage: Storage = storage
@@ -98,7 +98,7 @@ class For(Construction):
 
     def clear(self):
         if self.header.startswith('For('):
-            return self.header[:-1].replace('For(', '')
+            return self.header[:-2].replace('For(', '')
         return self.header
 
     def __repr__(self):

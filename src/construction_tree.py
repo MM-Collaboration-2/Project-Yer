@@ -60,6 +60,8 @@ class ConstructionTree():
     def parse(self, text: str, header: str):
         node = Node(header, [])                         # заголовок конструкции
 
+
+
         while len(text) > 0:
 
             m = search(self.pattern, text)
@@ -71,7 +73,11 @@ class ConstructionTree():
             ######
 
             new_header = text[m.start():m.end()]        # заголовок новой конструкции
-            start_body = end_body = m.end()
+
+
+
+
+            start_body = end_body = m.end() - 1
             stack = Stack()
 
             end_body = self.end_body(text)             # находим конец данной конструкции
@@ -176,6 +182,14 @@ if __name__ == '__main__':
     l = countdown([], 5);
     return l;
     '''
+
+    text3 = '''
+    h = 113;
+    return h;
+    '''
+
+
+
     from yer_builtins import BUILTINS
     text = syntax_analysis(text)
     s = Storage(BUILTINS)

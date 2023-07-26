@@ -23,4 +23,4 @@ class String(Object):
 
 
     def __repr__(self):
-        return str(self.data)
+        return '"' + self.data + '"'

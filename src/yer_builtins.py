@@ -1,5 +1,6 @@
 from object import Object
 from integer import Integer
+from float import Float
 from string import String
 from variable import Variable
 from callable import BuiltIn
@@ -78,6 +79,52 @@ def defined_func(params: list[Object], storage: Storage):
     return List(lst)
 
 
+def scan_func(params: list[Object], storage: Storage):
+    if len(params) > 0:
+        param = get_object(params[0])
+        if param.type == 'string':
+            return String(input(param.data))
+    return String(input())
+
+
+def integer_func(params: list[Object], storage: Storage):
+    if len(params) > 0:
+        param = get_object(params[0])
+        if param.type in ['integer', 'float']:
+            return Integer(param.data)
+        elif param.type == 'string':
+            try:
+                return Integer(int(param.data))
+            except:
+                pass
+    return Integer(0)
+
+
+def float_func(params: list[Object], storage: Storage):
+    if len(params) > 0:
+        param = get_object(params[0])
+        if param.type in ['integer', 'float']:
+            return Float(param.data)
+        elif param.type == 'string':
+            try:
+                return Float(float(param.data))
+            except:
+                pass
+    return Float(0)
+
+
+def string_func(params: list[Object], storage: Storage):
+    if len(params) > 0:
+        param = get_object(params[0])
+        if param.type in ['integer', 'string', 'float', 'list']:
+            return String(param.data)
+    return String('')
+
+
+def list_func(params: list[Object], storage: Storage):
+    return List(params)
+
+
 
 BUILTINS: dict[str, Variable] = {
 
@@ -87,6 +134,11 @@ BUILTINS: dict[str, Variable] = {
     'type': Variable('type', BuiltIn(type_func)),
     'screw_on': Variable('screw_on', BuiltIn(screw_on_func)),
     'defined': Variable('defined', BuiltIn(defined_func)),
+    'scan': Variable('scan', BuiltIn(scan_func)),
+    'integer': Variable('integer', BuiltIn(integer_func)),
+    'float': Variable('float', BuiltIn(float_func)),
+    'string': Variable('string', BuiltIn(string_func)),
+    'list': Variable('list', BuiltIn(list_func)),
 }
 
 if __name__ == '__main__':
