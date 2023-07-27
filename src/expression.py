@@ -1,4 +1,4 @@
-from utils import tokens, token_type, infix_to_postfix, smart_split
+from utils import token_type, infix_to_postfix, smart_split_comma
 from stack import Stack
 from object import Object
 from void import Void
@@ -98,7 +98,7 @@ class Expression(Construction):                                     # Выраж
 
         lst: list[Object] = []
 
-        exprs: list[Expression] = smart_split(token)
+        exprs: list[Expression] = smart_split_comma(token)
 
 
         ### здесь $argv в экспрешне не валидируется

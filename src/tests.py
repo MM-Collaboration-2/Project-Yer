@@ -2,7 +2,7 @@ import unittest
 
 from construction_tree import ConstructionTree
 
-from utils import smart_split, get_tokens, syntax_analysis
+from utils import smart_split_comma, get_tokens, syntax_analysis
 
 from storage import Storage
 
@@ -21,17 +21,17 @@ class UtilsTests(unittest.TestCase):
     
     def test_smart_split_0(self):
         text = 'var1, [["huh"], s]'
-        res = smart_split(text)
+        res = smart_split_comma(text)
         self.assertEqual(res, ['var1', ' [["huh"], s]'])
     
     def test_smart_split_1(self):
         text = '[], fn(), 14'
-        res = smart_split(text)
+        res = smart_split_comma(text)
         self.assertEqual(res, ['[]', ' fn()', ' 14'])
     
     def test_smart_split_2(self):
         text = 'foo([a, b], 0), "str"'
-        res = smart_split(text)
+        res = smart_split_comma(text)
         self.assertEqual(res, ['foo([a, b], 0)', ' "str"'])
 
 
@@ -48,7 +48,7 @@ class UtilsTests(unittest.TestCase):
     def test_get_tokens_2(self):
         text = 'foo([a, b], 0) / "str"'
         res = get_tokens(text)
-        self.assertEqual(res, ['foo([a, b], 0)', '/', '"str"'])
+        self.assertEqual(res, ['foo([a,b],0)', '/', '"str"'])
 
 
 
@@ -200,6 +200,20 @@ class TreeTests(unittest.TestCase):
         tree = ConstructionTree(text, storage)
         res = tree.run()
         self.assertEqual(res.data, 'b')
+
+    def test_tree_3(self):
+        text = '''
+        l = [[], [1], [1, 2], [1, 2, 3], [1, 2, 3, 4]];
+        i = 0;
+        While(len(get(l, i)) != 4) {
+            i = i + 1;
+        }
+        return i;
+        '''
+        storage = Storage(BUILTINS)
+        tree = ConstructionTree(text, storage)
+        res = tree.run()
+        self.assertEqual(res.obj.data, 4)
 
 
 

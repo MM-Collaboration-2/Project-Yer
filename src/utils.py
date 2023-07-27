@@ -7,7 +7,7 @@ global TOKEN_TYPES
 TOKEN_TYPES: dict[str, str] = {
 
         # перед переменными
-        '[a-zA-Z_][a-zA-Z0-9_]*\ *\(.*?\)': 'function',
+        '[a-zA-Z_][a-zA-Z0-9_]*\ *\(': 'function',
         #'[a-zA-Z_][a-zA-Z0-9_]*\ *\(': 'function',
 
         # отрицательные числа перед операциями
@@ -41,12 +41,6 @@ TOKEN_TYPES: dict[str, str] = {
         }
 
 
-# Получаем список токенов из строки выражения в инфиксном виде
-def tokens(infixexpr: str):
-    pattern = '|'.join(t for t in TOKEN_TYPES.keys())
-    return findall(pattern, infixexpr)
-
-
 # Определяем тип токена
 def token_type(token: str) -> str:
     for pattern, token_type in TOKEN_TYPES.items():
@@ -55,6 +49,10 @@ def token_type(token: str) -> str:
     return 'other'
 
 
+# возвращает число, равное нессответсвию заданных скобок
+# 0 если количесво скобок равно
+# отрицательное - больше закрывающих
+# положительное - больше открывающих
 def brackets_not_in_string(text: str, open_bracket='(', close_bracket=')') -> bool:
     quotes: int = 0
     brackets: int = 0
@@ -71,7 +69,9 @@ def brackets_not_in_string(text: str, open_bracket='(', close_bracket=')') -> bo
     return brackets
 
 
-def smart_split(expression: str):
+# разделяет строку выражений по запятым
+# вложенные запятые игнорируются
+def smart_split_comma(expression: str):
     parts = expression.split(',')
     valid_parts = []
     index: int = 0
@@ -115,6 +115,65 @@ def smart_split(expression: str):
     return valid_parts
 
 
+def smart_split_semi(expressions: str):
+    parts: list[str] = expressions.split(';')
+    parts = [_ for _ in parts if _]
+    new_expressions: list[str] = []
+    index: int = 0
+    string: int = 0
+    while index < len(parts):
+        part = parts[index]
+        for char in part:
+            if char == '"':
+                string += 1
+                string %= 2
+
+        while string != 0:
+            index += 1
+            new_part = parts[index]
+
+            for char in new_part:
+                if char == '"':
+                    string += 1
+                    string %= 2
+
+            part += ';' + new_part
+
+        index += 1
+        new_expressions.append(part)
+
+    return new_expressions
+
+
+
+# получить выражения заголовка конструкции
+def get_header_expressions(text: str):
+    text = text[text.find('(')+1:]
+    new_text: str = ''
+    brackets: int = 1
+    index: int = 0
+    string: int = 0
+    while brackets != 0:
+        char = text[index]
+        if char == '"':
+            string += 1
+            string %= 2
+
+        if string == 0:
+            if char == '(':
+                brackets += 1
+            elif char == ')':
+                brackets -= 1
+
+        new_text += char
+        index += 1
+
+    return new_text[:-1]
+
+    
+
+
+# Получаем список токенов из строки выражения в инфиксном виде
 def get_tokens(expression: str):
     pattern = '|'.join(t for t in TOKEN_TYPES.keys())
     args = findall(pattern, expression)
@@ -254,7 +313,7 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
     
 
 if __name__ == '__main__':
-    text = 'var1 + [["huh"], s]'
-    print(get_tokens(text))
-    #print(smart_split(text))
+    text = '"ab;oba"; yell("t;d"); "asd"'
+    print(smart_split_semi(text))
+    #print(smart_split_comma(text))
 

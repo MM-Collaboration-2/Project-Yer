@@ -5,10 +5,11 @@ from storage import Storage
 from construction import Construction
 from expression import Expression
 from block import Block
+from utils import get_header_expressions, smart_split_semi
 
 
 class If(Construction):
-    regex: str = 'If\(.*?\){'
+    regex: str = 'If\ *\(.*?\)\ *{'
     name = 'If'
     def __init__(self, header: str, block: Block, storage: Storage):
         self.storage: Storage = storage
@@ -17,12 +18,7 @@ class If(Construction):
         self.block = block
 
     def get_check_expression(self) -> Expression:
-        return Expression(self.clear(), self.storage, True)
-
-    def clear(self):
-        if self.header.startswith('If('):
-            return self.header[:-2].replace('If(', '')
-        return self.header
+        return Expression(get_header_expressions(self.header), self.storage, True)
 
     def run(self) -> Object:
         result: Objcet = Void()
@@ -37,7 +33,7 @@ class If(Construction):
 
 
 class While(Construction):
-    regex: str = 'While\(.*?\){'
+    regex: str = 'While\ *\(.*?\)\ *{'
     name = 'While'
     def __init__(self, header: str, block: Block, storage: Storage):
         self.storage: Storage = storage
@@ -56,12 +52,7 @@ class While(Construction):
         return result
         
     def get_check_expression(self) -> Expression:
-        return Expression(self.clear(), self.storage, True)
-
-    def clear(self):
-        if self.header.startswith('While('):
-            return self.header[:-2].replace('While(', '')
-        return self.header
+        return Expression(get_header_expressions(self.header), self.storage, True)
 
     def __repr__(self):
         block = str(self.block)
@@ -69,7 +60,7 @@ class While(Construction):
 
 
 class For(Construction):
-    regex: str = 'For\(.*?\){'
+    regex: str = 'For\ *\(.*?\)\ *{'
     name = 'For'
     def __init__(self, header: str, block: Block, storage: Storage):
         self.storage: Storage = storage
@@ -90,7 +81,7 @@ class For(Construction):
         return result
                 
     def init_expressions(self):
-        expressions = [s for s in self.clear().split(';') if s]
+        expressions = smart_split_semi(get_header_expressions(self.header))
         expressions = [Expression(e, self.storage, True) for e in expressions]
         self.init_expression = expressions[0]
         self.check_expression = expressions[1]
