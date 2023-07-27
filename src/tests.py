@@ -203,7 +203,7 @@ class TreeTests(unittest.TestCase):
 
     def test_tree_3(self):
         text = '''
-        l = [[], [1], [1, 2], [1, 2, 3], [1, 2, 3, 4]];
+        l = [[], [1], [1, 2], [1, 2, 3], [1, 2, 3, 4], [1, 2, 3, 4, 5]];
         i = 0;
         While(len(get(l, i)) != 4) {
             i = i + 1;

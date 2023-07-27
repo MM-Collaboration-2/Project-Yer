@@ -313,7 +313,7 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
     
 
 if __name__ == '__main__':
-    text = '"ab;oba"; yell("t;d"); "asd"'
-    print(smart_split_semi(text))
+    text = 'Func (a) {'
+    print(get_header_expressions(text))
     #print(smart_split_comma(text))
 
