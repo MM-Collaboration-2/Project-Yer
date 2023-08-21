@@ -127,6 +127,8 @@ class Expression(Construction):                                     # Выраж
         # получаем номер аргумента в списке аргументов
         num = int(token.replace('$argv', ''))
         arguments = storage.get_arguments()
+
+        
         if 0 <= num < len(arguments):
             return arguments[num]
         return Integer(0)

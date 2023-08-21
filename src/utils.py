@@ -313,7 +313,7 @@ def syntax_analysis(text: str, logging:bool = False) -> str:
     
 
 if __name__ == '__main__':
-    text = 'Func (a) {'
-    print(get_header_expressions(text))
+    text = 'a * b() - 1'
+    print(infix_to_postfix(text))
     #print(smart_split_comma(text))
 

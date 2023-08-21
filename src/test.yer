@@ -1,3 +1,8 @@
-for  (i=0; i < len("a;(b)oja");i = i+1) {
-	yell(i);
+Func(countdown){
+	yell($argv0);
+	If($argv0 > 0){
+		countdown($argv0-1);
+	}
+	return;
 }
+countdown(5);

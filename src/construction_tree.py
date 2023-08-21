@@ -57,6 +57,28 @@ class ConstructionTree():
         return index
 
 
+    def char_token_type(char: str) -> str:
+        match char:
+            case '':
+                pass
+
+
+    def new_parse(self, text: str, header: str):
+        current_token: str = ''
+        current_char: str = ''
+        current_token_length: int = 0;
+        index: int = 0
+
+        while index < len(text - 1):
+            node = Node(header, [])
+
+            current_char = text[index]
+            current_token_length = 1
+            pass
+            
+
+
+
     def parse(self, text: str, header: str):
         node = Node(header, [])                         # заголовок конструкции
 
