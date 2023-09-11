@@ -43,11 +43,13 @@ class Expression(Construction):                                     # Выраж
                     self.delete_flag = True
                     continue
 
-                rop = stack.pop()
-                lop = stack.pop()
-                op = token
-                
-                result = Operation.run(lop, rop, op, self.storage)
+                try:
+                    rop = stack.pop()
+                    lop = stack.pop()
+                    op = token
+                    result = Operation.run(lop, rop, op, self.storage)
+                except:
+                    result = Integer(0)
                 # Здесь валидировать операнды
                 # так как результат операции возвращается обратно в стек
                 # т.е. тип возвращаемого операцией объекта
