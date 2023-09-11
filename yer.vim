@@ -13,9 +13,11 @@ syn match yerNumber '[-+]\d\+'
 syn match yerNumber '[-+]\d\+\.\d*'
 
 syn keyword yerBlockCmd Expr While If For Func
+syn keyword yerKeyWord return
+syn match yerKeyWord 'return'
 syn match yerComment '\'.*\''
 syn match yerString '".*"'
-syn match yerVariable '[a-zA-Z_][a-zA-Z0-9_]*'
+"syn match yerVariable '[a-zA-Z_][a-zA-Z0-9_]*'
 syn match yerFunction '[a-zA-Z_][a-zA-Z0-9_]*\ze('
 
 let b:current_syntax = "yer"
@@ -25,6 +27,6 @@ hi def link yerBlockCmd    Conditional
 hi def link yerComment     Comment
 hi def link yerString      String
 hi def link yerFunction    Function
-hi def link yerVariable    Type " for some reason Variable here is just plain color
+"hi def link yerVariable    Type " for some reason Variable here is just plain color
 
 
